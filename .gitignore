@@ -1,0 +1,2 @@
+test/libgtest.a
+test_*.[^ch]
