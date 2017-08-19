@@ -34,5 +34,17 @@ TEST(DNSMessageTest, GetRawMessageReturnsmRawMsg)
   delete dnsMsg;
 }
 
+TEST(DNSMessageTest, ProcessMessageRawMsg) {
+  char* input;
+  bool result;
+  DNSMessage* dnsMsg;
+
+  input = (char* )"";
+  dnsMsg = new DNSMessage(input);
+  result = dnsMsg->ProcessMessage();
+  EXPECT_FALSE(result);
+  delete dnsMsg;
+}
+
 } // namespace testing
 } // namespace dns_message
