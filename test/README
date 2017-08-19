@@ -1,0 +1,13 @@
+From the googletest/googletest repo, run:
+$  g++ -isystem include -I. -pthread -c src/gtest-all.cc
+$  ar -rv libgtest.a gtest-all.o
+
+Copy the archive into this test/ directory (cmd assume they are in the
+same parent-of-parent directory):
+$  cp libgtest.a ../../5ycast/test/
+
+Copy the provided test runner:
+$  cp src/gtest_main.cc ../../5ycast/test/
+
+Compile the tests:
+$  g++ -Werror -std=c++11 -pthread -Iinclude -I../googletest/googletest/include/ -o test_dns_message src/mdns_message.cc test/test_mdns_message.cc test/gtest_main.cc test/libgtest.a
