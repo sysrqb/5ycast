@@ -12,6 +12,7 @@ class DNSQuestion;
 class DNSRR;
 class DNSRData;
 class DNSPtrRData;
+class DNSMessage;
 
 class DNSHeader {
 
@@ -53,7 +54,7 @@ private:
        response to a particular (unicast or multicast) query, the
        Query Identifier MUST match the ID from the query message.
   */
-  uint16_t msg_id;
+  uint16_t mMsgID;
 
   /* Fields opcode and qr_field are in opposite order for
      convenience only */
@@ -74,7 +75,7 @@ private:
        messages received with an OPCODE other than zero MUST be
        silently ignored.
     */
-  uint16_t opcode;
+  uint16_t mOpCode;
 
   struct {
     /* RFC 1035:
@@ -85,7 +86,7 @@ private:
          In query messages the QR bit MUST be zero.
          In response messages the QR bit MUST be one.
     */
-    bool qr_field:1;
+    bool mQRField:1;
 
     /* RFC 1035:
          Authoritative Answer - this bit is valid in responses,
@@ -106,7 +107,7 @@ private:
          this bit would imply there's some other place where "better"
          information may be found) and MUST be ignored on reception.
     */
-    bool aa_field:1;
+    bool mAAField:1;
 
     /* RFC 1035:
          TrunCation - specifies that this message was truncated
@@ -130,7 +131,7 @@ private:
          querier SHOULD reissue its query using TCP in order to
          receive the larger response.
     */
-    bool tc_field:1;
+    bool mTCField:1;
 
     /* RFC 1035:
          Recursion Desired - this bit may be set in a query and
@@ -143,7 +144,7 @@ private:
          Recursion Desired bit SHOULD be zero on transmission, and
          MUST be ignored on reception.
     */
-    bool rd_field:1;
+    bool mRDField:1;
 
     /* RFC 1035:
          Recursion Available - this be is set or cleared in a
@@ -155,8 +156,8 @@ private:
          Recursion Available bit MUST be zero on transmission, and
          MUST be ignored on reception.
     */
-    bool ra_field:1;
-  } bits;
+    bool mRAField:1;
+  } mBits;
 
   /* We assert this field is zero. */
   /* RFC 1035:
@@ -190,7 +191,7 @@ private:
           |QR|   Opcode  |AA|TC|RD|RA| Z|AD|CD|   RCODE   |
           +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
   */
-  const uint8_t z_field = 0;
+  const uint8_t mkZField = 0;
 
   /* RFC 1035:
        Response code - this 4 bit field is set as part of responses.
@@ -209,28 +210,28 @@ private:
        messages received with non-zero Response Codes MUST be
        silently ignored.
   */
-  uint8_t rcode;
+  uint8_t mRcode;
 
   /* RFC 1035:
        an unsigned 16 bit integer specifying the number of entries
        in the question section.
   */
-  uint16_t qdcount;
+  uint16_t mQDCount;
 
   /* an unsigned 16 bit integer specifying the number of resource
      records in the answer section.
   */
-  uint16_t ancount;
+  uint16_t mANCount;
 
   /* an unsigned 16 bit integer specifying the number of name server
      resource records in the authority records section.
   */
-  uint16_t nscount;
+  uint16_t mNSCount;
 
   /* an unsigned 16 bit integer specifying the number of resource
      records in the additional records section.
   */
-  uint16_t arcount;
+  uint16_t mARCount;
 };
 
 class DNSQuestion {
@@ -261,7 +262,7 @@ private:
        that this field may be an odd number of octets; no
        padding is used.
   */
-  std::string qname;
+  std::string mQName;
 
   /* RFC 1035:
        a two octet code which specifies the type of the query.
@@ -306,7 +307,7 @@ private:
        bit of the qclass field is used to indicate that unicast
        responses are preferred for this particular question.
   */
-  uint16_t qcode;
+  uint16_t mQCode;
 
   /* RFC 1035:
        a two octet code that specifies the class of the query.
@@ -336,7 +337,7 @@ private:
        packets if there are too many records to fit in a single
        packet).
   */
-  uint16_t qclass;
+  uint16_t mQClass;
 };
 
 class DNSRData {
@@ -346,7 +347,7 @@ public:
 
 class DNSPtrRData : DNSRData {
 private:
-  std::string ptrdname;
+  std::string mPtrDName;
 };
 
 class DNSRR {
@@ -380,7 +381,7 @@ private:
   /* RFC 1035:
        a domain name to which this resource record pertains.
   */
-  std::string name;
+  std::string mName;
 
   /* RFC 1035:
        two octets containing one of the RR type codes. This field
@@ -388,7 +389,7 @@ private:
 
     See comment documenting qtype for values.
   */
-  enum rrtype : uint16_t {
+  enum eRRType : uint16_t {
     /* a host address */
     RR_A = 1,
     /* an authoritative name server */
@@ -435,7 +436,7 @@ private:
        packets if there are too many records to fit in a single
        packet).
   */
-  uint16_t rrclass;
+  uint16_t mRRClass;
 
   /* RFC 1035:
        a 32 bit unsigned integer that specifies the time interval (in
@@ -444,13 +445,13 @@ private:
        the RR can only be used for the transaction in progress, and
        should not be cached.
   */
-  uint32_t ttl;
+  uint32_t mTTL;
 
   /* RFC 1035:
        an unsigned 16 bit integer that specifies the length in octets
        of the RDATA field.
   */
-  uint16_t rdlength;
+  uint16_t mRDLength;
 
   /* RFC 1035:
        a variable length string of octets that describes the
@@ -459,21 +460,21 @@ private:
        if the TYPE is A and the CLASS is IN, the RDATA field is a 4
        octet ARPA Internet address.
   */
-  DNSRData rdata;
+  DNSRData mRData;
 };
 
 class DNSMessage {
 private:
-  DNSHeader *header;
-  std::vector<DNSQuestion> questions;
-  DNSRR *rr_section[3];
-  std::string rawmsg;
+  DNSHeader* mHeader;
+  std::vector<DNSQuestion> mQuestions;
+  DNSRR* mRRSection[3];
+  std::string mRawMsg;
 
 public:
   // Throws std::bad_alloc when allocation fails
-  DNSMessage(const char * const m);
-  const std::string getRawMessage() const { return rawmsg; }
-  bool processMessage();
+  DNSMessage(const char* const m);
+  const std::string GetRawMessage() const { return mRawMsg; }
+  bool ProcessMessage();
 };
 
 } // namespace dns_message

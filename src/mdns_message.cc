@@ -2,15 +2,15 @@
 
 namespace dns_message {
 
-DNSMessage::DNSMessage(const char * const m) : rawmsg(m)
+DNSMessage::DNSMessage(const char* const m) : mRawMsg(m)
 {
-  header = new DNSHeader();
-  rr_section[0] = new DNSRR();
-  rr_section[1] = new DNSRR();
-  rr_section[2] = new DNSRR();
+  mHeader = new DNSHeader();
+  mRRSection[0] = new DNSRR();
+  mRRSection[1] = new DNSRR();
+  mRRSection[2] = new DNSRR();
 }
 
-bool DNSMessage::processMessage()
+bool DNSMessage::ProcessMessage()
 {
   return false;
 }
