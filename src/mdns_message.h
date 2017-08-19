@@ -40,33 +40,33 @@ private:
        kind of query. This identifier is copied the corresponding
        reply and can be used by the requester to match up replies to
        outstanding queries.
-  
+
      RFC 6762:
        In multicast query messages, the Query Identifier SHOULD be
        set to zero on transmission.
-  
+
        In multicast responses, including unsolicited multicast
        responses, the Query Identifier MUST be set to zero on
        transmission, and MUST be ignored on reception.
-  
+
        In legacy unicast response messages generated specifically in
        response to a particular (unicast or multicast) query, the
        Query Identifier MUST match the ID from the query message.
   */
   uint16_t msg_id;
-  
+
   /* Fields opcode and qr_field are in opposite order for
      convenience only */
   /* RFC 1035:
        A four bit field that specifies kind of query in this
        message. This value is set by the originator of a query
        and copied into the response. The values are:
-  
+
          0      a standard query (QUERY)
          1      an inverse query (IQUERY)
          2      a server status request (STATUS)
          3-15   reserved for future use
-  
+
      RFC 6762:
        In both multicast query and multicast response messages, the
        OPCODE MUST be zero on transmission (only standard queries
@@ -75,7 +75,7 @@ private:
        silently ignored.
     */
   uint16_t opcode;
-  
+
   struct {
     /* RFC 1035:
          A one bit field that specifies whether this message is a
@@ -289,11 +289,11 @@ private:
        MINFO       14 mailbox or mail list information
        MX          15 mail exchange
        TXT         16 text strings
-       
+
        QTYPE fields appear in the question part of a query.  QTYPES
        are a superset of TYPEs, hence all TYPEs are valid QTYPEs.
        In addition, the following QTYPEs are defined:
-       
+
        AXFR        252 A request for a transfer of an entire zone
        MAILB       253 A request for mailbox-related records
                        (MB, MG or MR)
@@ -433,7 +433,7 @@ private:
        record is a member of a unique RRSet, and the entire RRSet has
        been sent together (in the same packet, or in consecutive
        packets if there are too many records to fit in a single
-       packet). 
+       packet).
   */
   uint16_t rrclass;
 
