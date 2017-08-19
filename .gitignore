@@ -1,2 +1,4 @@
 test/libgtest.a
-test_*.[^ch]
+test_*
+!test_*.[ch]*
+test/gtest_main.cc
