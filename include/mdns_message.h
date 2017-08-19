@@ -15,7 +15,6 @@ class DNSPtrRData;
 class DNSMessage;
 
 class DNSHeader {
-
 private:
   /* The header contains the following fields:
 
@@ -232,6 +231,10 @@ private:
      records in the additional records section.
   */
   uint16_t mARCount;
+
+public:
+  DNSHeader() {}
+  bool ProcessHeader(const char* const m);
 };
 
 class DNSQuestion {
