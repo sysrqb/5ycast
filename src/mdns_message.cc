@@ -14,6 +14,15 @@ DNSMessage::DNSMessage(const char* const m, const size_t mlen) : mRawMsg(m, mlen
 
 DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, strlen(m)) { }
 
+DNSMessage::~DNSMessage()
+{
+  delete mHeader;
+  delete mRRSection[0];
+  delete mRRSection[1];
+  delete mRRSection[2];
+}
+
+
 bool DNSMessage::ProcessMessage()
 {
   return false;
