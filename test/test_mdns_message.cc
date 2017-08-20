@@ -117,6 +117,25 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsg) {
   EXPECT_EQ(0, dnsHeader->GetARCount());
   delete dnsHeader;
 
+  /* If Z is non-zero, we return early */
+  input = (char* )"\xff\xff\xff\x8f\xff\xff\xff\xff\xff\xff\xff\xff";
+  dnsHeader = new DNSHeader();
+  result = dnsHeader->ProcessHeader(input, 12);
+  EXPECT_TRUE(result);
+  EXPECT_EQ((1<<16)-1, dnsHeader->GetMsgID());
+  EXPECT_EQ((1<<4)-1, dnsHeader->GetOpCode());
+  EXPECT_TRUE(dnsHeader->GetQRField());
+  EXPECT_TRUE(dnsHeader->GetAAField());
+  EXPECT_TRUE(dnsHeader->GetTCField());
+  EXPECT_TRUE(dnsHeader->GetRDField());
+  EXPECT_TRUE(dnsHeader->GetRAField());
+  EXPECT_EQ((1<<4)-1, dnsHeader->GetRCode());
+  EXPECT_EQ((1<<16)-1, dnsHeader->GetQDCount());
+  EXPECT_EQ((1<<16)-1, dnsHeader->GetANCount());
+  EXPECT_EQ((1<<16)-1, dnsHeader->GetNSCount());
+  EXPECT_EQ((1<<16)-1, dnsHeader->GetARCount());
+  delete dnsHeader;
+
   input = (char* )"\1\0\0\0\0\1\1\0\0\0\0\0\1";
   dnsHeader = new DNSHeader();
   result = dnsHeader->ProcessHeader(input, 12);
@@ -133,6 +152,24 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsg) {
   EXPECT_EQ(256, dnsHeader->GetANCount());
   EXPECT_EQ(0, dnsHeader->GetNSCount());
   EXPECT_EQ(0, dnsHeader->GetARCount());
+  delete dnsHeader;
+
+  input = (char* )"\0\4\x81""\0\2\0\0\x8""\0\0\1\0\1";
+  dnsHeader = new DNSHeader();
+  result = dnsHeader->ProcessHeader(input, 12);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(4, dnsHeader->GetMsgID());
+  EXPECT_EQ(0, dnsHeader->GetOpCode());
+  EXPECT_TRUE(dnsHeader->GetQRField());
+  EXPECT_FALSE(dnsHeader->GetAAField());
+  EXPECT_FALSE(dnsHeader->GetTCField());
+  EXPECT_TRUE(dnsHeader->GetRDField());
+  EXPECT_FALSE(dnsHeader->GetRAField());
+  EXPECT_EQ(0, dnsHeader->GetRCode());
+  EXPECT_EQ(512, dnsHeader->GetQDCount());
+  EXPECT_EQ(8, dnsHeader->GetANCount());
+  EXPECT_EQ(0, dnsHeader->GetNSCount());
+  EXPECT_EQ(256, dnsHeader->GetARCount());
   delete dnsHeader;
 }
 
