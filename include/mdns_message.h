@@ -277,7 +277,7 @@ private:
        that this field may be an odd number of octets; no
        padding is used.
   */
-  std::string mQName;
+  std::vector<std::string> mQNames;
 
   /* RFC 1035:
        a two octet code which specifies the type of the query.
