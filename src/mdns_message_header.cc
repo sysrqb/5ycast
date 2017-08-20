@@ -29,7 +29,7 @@ bool DNSHeader::ProcessHeader(const char* const m, const std::size_t mlen)
   {
     const std::string byte = header.substr(2, 1);
     const char* byte_c = byte.c_str();
-    qr = (uint8_t(*byte_c) >> 7) == 1;
+    qr = (std::uint8_t(*byte_c) >> 7) == 1;
     // Drop the lower three bit fields, AND the top bit with 0
     opcode = (*byte_c >> 3) & 0xF;
     aa = ((*byte_c >> 2) & 0x1) == 1;

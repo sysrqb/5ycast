@@ -1,7 +1,6 @@
 #ifndef MDNS_MESSAGE_H
 #define MDNS_MESSAGE_H
 
-#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -53,7 +52,7 @@ private:
        response to a particular (unicast or multicast) query, the
        Query Identifier MUST match the ID from the query message.
   */
-  uint16_t mMsgID;
+  std::uint16_t mMsgID;
 
   /* Fields opcode and qr_field are in opposite order for
      convenience only */
@@ -74,7 +73,7 @@ private:
        messages received with an OPCODE other than zero MUST be
        silently ignored.
     */
-  uint16_t mOpCode;
+  std::uint16_t mOpCode;
 
   struct {
     /* RFC 1035:
@@ -190,7 +189,7 @@ private:
           |QR|   Opcode  |AA|TC|RD|RA| Z|AD|CD|   RCODE   |
           +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
   */
-  const uint8_t mkZField = 0;
+  const std::uint8_t mkZField = 0;
 
   /* RFC 1035:
        Response code - this 4 bit field is set as part of responses.
@@ -209,45 +208,45 @@ private:
        messages received with non-zero Response Codes MUST be
        silently ignored.
   */
-  uint8_t mRcode;
+  std::uint8_t mRcode;
 
   /* RFC 1035:
        an unsigned 16 bit integer specifying the number of entries
        in the question section.
   */
-  uint16_t mQDCount;
+  std::uint16_t mQDCount;
 
   /* an unsigned 16 bit integer specifying the number of resource
      records in the answer section.
   */
-  uint16_t mANCount;
+  std::uint16_t mANCount;
 
   /* an unsigned 16 bit integer specifying the number of name server
      resource records in the authority records section.
   */
-  uint16_t mNSCount;
+  std::uint16_t mNSCount;
 
   /* an unsigned 16 bit integer specifying the number of resource
      records in the additional records section.
   */
-  uint16_t mARCount;
+  std::uint16_t mARCount;
 
 public:
   DNSHeader() {}
   bool ProcessHeader(const char* const m, const std::size_t mlen);
   bool ProcessHeader(const char* const m);
-  uint16_t GetMsgID() const { return mMsgID; }
-  uint16_t GetOpCode() const { return mOpCode; }
+  std::uint16_t GetMsgID() const { return mMsgID; }
+  std::uint16_t GetOpCode() const { return mOpCode; }
   bool GetQRField() const { return mBits.mQRField; }
   bool GetAAField() const { return mBits.mAAField; }
   bool GetTCField() const { return mBits.mTCField; }
   bool GetRDField() const { return mBits.mRDField; }
   bool GetRAField() const { return mBits.mRAField; }
-  uint8_t GetRCode() const { return mRcode; }
-  uint16_t GetQDCount() const { return mQDCount; }
-  uint16_t GetANCount() const { return mANCount; }
-  uint16_t GetNSCount() const { return mNSCount; }
-  uint16_t GetARCount() const { return mARCount; }
+  std::uint8_t GetRCode() const { return mRcode; }
+  std::uint16_t GetQDCount() const { return mQDCount; }
+  std::uint16_t GetANCount() const { return mANCount; }
+  std::uint16_t GetNSCount() const { return mNSCount; }
+  std::uint16_t GetARCount() const { return mARCount; }
 };
 
 class DNSQuestion {
@@ -323,7 +322,7 @@ private:
        bit of the qclass field is used to indicate that unicast
        responses are preferred for this particular question.
   */
-  uint16_t mQCode;
+  std::uint16_t mQCode;
 
   /* RFC 1035:
        a two octet code that specifies the class of the query.
@@ -353,7 +352,7 @@ private:
        packets if there are too many records to fit in a single
        packet).
   */
-  uint16_t mQClass;
+  std::uint16_t mQClass;
 };
 
 class DNSRData {
@@ -405,7 +404,7 @@ private:
 
     See comment documenting qtype for values.
   */
-  enum eRRType : uint16_t {
+  enum eRRType : std::uint16_t {
     /* a host address */
     RR_A = 1,
     /* an authoritative name server */
@@ -452,7 +451,7 @@ private:
        packets if there are too many records to fit in a single
        packet).
   */
-  uint16_t mRRClass;
+  std::uint16_t mRRClass;
 
   /* RFC 1035:
        a 32 bit unsigned integer that specifies the time interval (in
@@ -461,13 +460,13 @@ private:
        the RR can only be used for the transaction in progress, and
        should not be cached.
   */
-  uint32_t mTTL;
+  std::uint32_t mTTL;
 
   /* RFC 1035:
        an unsigned 16 bit integer that specifies the length in octets
        of the RDATA field.
   */
-  uint16_t mRDLength;
+  std::uint16_t mRDLength;
 
   /* RFC 1035:
        a variable length string of octets that describes the
