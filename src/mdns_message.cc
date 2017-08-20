@@ -25,6 +25,9 @@ DNSMessage::~DNSMessage()
 
 bool DNSMessage::ProcessMessage()
 {
+  if (!mHeader->ProcessHeader(mRawMsg.c_str(), mRawMsg.length())) {
+    return false;
+  }
   return false;
 }
 
