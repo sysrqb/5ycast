@@ -136,6 +136,12 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsg) {
   EXPECT_EQ((1<<16)-1, dnsHeader->GetARCount());
   delete dnsHeader;
 
+  input = (char* )"\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff";
+  dnsHeader = new DNSHeader();
+  result = dnsHeader->ProcessHeader(input, 12);
+  EXPECT_FALSE(result);
+  delete dnsHeader;
+
   input = (char* )"\1\0\0\0\0\1\1\0\0\0\0\0\1";
   dnsHeader = new DNSHeader();
   result = dnsHeader->ProcessHeader(input, 12);
