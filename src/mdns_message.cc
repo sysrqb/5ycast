@@ -28,7 +28,7 @@ bool DNSMessage::ProcessMessage()
   if (!mHeader->ProcessHeader(mRawMsg.c_str(), mRawMsg.length())) {
     return false;
   }
-  return false;
+  return true;
 }
 
 } // namespace dns_message

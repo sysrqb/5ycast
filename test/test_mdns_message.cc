@@ -56,6 +56,18 @@ TEST(DNSMessageTest, ProcessMessageRawMsg) {
   result = dnsMsg->ProcessMessage();
   EXPECT_FALSE(result);
   delete dnsMsg;
+
+  input = (char* )"\0\0\0\0\0\0\0\0\0\0\0\0";
+  dnsMsg = new DNSMessage(input, 12);
+  result = dnsMsg->ProcessMessage();
+  EXPECT_TRUE(result);
+  delete dnsMsg;
+
+  input = (char* )"\0\0\0\x40\0\0\0\0\0\0\0\0";
+  dnsMsg = new DNSMessage(input, 12);
+  result = dnsMsg->ProcessMessage();
+  EXPECT_FALSE(result);
+  delete dnsMsg;
 }
 
 TEST(DNSHeaderTest, ProcessHeaderRawMsg) {
