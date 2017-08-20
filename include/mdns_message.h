@@ -234,6 +234,7 @@ private:
 
 public:
   DNSHeader() {}
+  bool ProcessHeader(const char* const m, const std::size_t mlen);
   bool ProcessHeader(const char* const m);
 };
 
