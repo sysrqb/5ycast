@@ -1,10 +1,10 @@
-#include <string.h>
+#include <cstring>
 
 #include "mdns_message.h"
 
 namespace dns_message {
 
-DNSMessage::DNSMessage(const char* const m, const size_t mlen) : mRawMsg(m, mlen)
+DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mRawMsg(m, mlen)
 {
   mHeader = new DNSHeader();
   mRRSection[0] = new DNSRR();
@@ -12,7 +12,7 @@ DNSMessage::DNSMessage(const char* const m, const size_t mlen) : mRawMsg(m, mlen
   mRRSection[2] = new DNSRR();
 }
 
-DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, strlen(m)) { }
+DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, std::strlen(m)) { }
 
 DNSMessage::~DNSMessage()
 {
