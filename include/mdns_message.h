@@ -236,6 +236,18 @@ public:
   DNSHeader() {}
   bool ProcessHeader(const char* const m, const std::size_t mlen);
   bool ProcessHeader(const char* const m);
+  uint16_t GetMsgID() const { return mMsgID; }
+  uint16_t GetOpCode() const { return mOpCode; }
+  bool GetQRField() const { return mBits.mQRField; }
+  bool GetAAField() const { return mBits.mAAField; }
+  bool GetTCField() const { return mBits.mTCField; }
+  bool GetRDField() const { return mBits.mRDField; }
+  bool GetRAField() const { return mBits.mRAField; }
+  uint8_t GetRCode() const { return mRcode; }
+  uint16_t GetQDCount() const { return mQDCount; }
+  uint16_t GetANCount() const { return mANCount; }
+  uint16_t GetNSCount() const { return mNSCount; }
+  uint16_t GetARCount() const { return mARCount; }
 };
 
 class DNSQuestion {

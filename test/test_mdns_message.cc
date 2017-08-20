@@ -98,6 +98,42 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsg) {
   result = dnsHeader->ProcessHeader(input, 12);
   EXPECT_FALSE(result);
   delete dnsHeader;
+
+  input = (char* )"\0\0\0\0\0\0\0\0\0\0\0\0\0";
+  dnsHeader = new DNSHeader();
+  result = dnsHeader->ProcessHeader(input, 12);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(0, dnsHeader->GetMsgID());
+  EXPECT_EQ(0, dnsHeader->GetOpCode());
+  EXPECT_FALSE(dnsHeader->GetQRField());
+  EXPECT_FALSE(dnsHeader->GetAAField());
+  EXPECT_FALSE(dnsHeader->GetTCField());
+  EXPECT_FALSE(dnsHeader->GetRDField());
+  EXPECT_FALSE(dnsHeader->GetRAField());
+  EXPECT_EQ(0, dnsHeader->GetRCode());
+  EXPECT_EQ(0, dnsHeader->GetQDCount());
+  EXPECT_EQ(0, dnsHeader->GetANCount());
+  EXPECT_EQ(0, dnsHeader->GetNSCount());
+  EXPECT_EQ(0, dnsHeader->GetARCount());
+  delete dnsHeader;
+
+  input = (char* )"\1\0\0\0\0\1\1\0\0\0\0\0\1";
+  dnsHeader = new DNSHeader();
+  result = dnsHeader->ProcessHeader(input, 12);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(256, dnsHeader->GetMsgID());
+  EXPECT_EQ(0, dnsHeader->GetOpCode());
+  EXPECT_FALSE(dnsHeader->GetQRField());
+  EXPECT_FALSE(dnsHeader->GetAAField());
+  EXPECT_FALSE(dnsHeader->GetTCField());
+  EXPECT_FALSE(dnsHeader->GetRDField());
+  EXPECT_FALSE(dnsHeader->GetRAField());
+  EXPECT_EQ(0, dnsHeader->GetRCode());
+  EXPECT_EQ(1, dnsHeader->GetQDCount());
+  EXPECT_EQ(256, dnsHeader->GetANCount());
+  EXPECT_EQ(0, dnsHeader->GetNSCount());
+  EXPECT_EQ(0, dnsHeader->GetARCount());
+  delete dnsHeader;
 }
 
 } // namespace testing

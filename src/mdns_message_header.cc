@@ -1,7 +1,5 @@
 #include <cstring>
 
-#include <arpa/inet.h>
-
 #include "mdns_message.h"
 
 namespace dns_message {
@@ -25,7 +23,7 @@ bool DNSHeader::ProcessHeader(const char* const m, const std::size_t mlen)
   {
     const std::string id_bytes = header.substr(0, 2);
     const char* id_bytes_c = id_bytes.c_str();
-    id = ntohs(*id_bytes_c);
+    id = (id_bytes_c[0] << 8) | (id_bytes_c[1]);
   }
 
   {
@@ -56,25 +54,25 @@ bool DNSHeader::ProcessHeader(const char* const m, const std::size_t mlen)
   {
     const std::string qd_str = header.substr(4, 2);
     const char* qd_c = qd_str.c_str();
-    qdcount = ntohs(*qd_c);
+    qdcount = (qd_c[0] << 8) | qd_c[1];
   }
 
   {
-    const std::string an_str = header.substr(4, 2);
+    const std::string an_str = header.substr(6, 2);
     const char* an_c = an_str.c_str();
-    ancount = ntohs(*an_c);
+    ancount = (an_c[0] << 8) | an_c[1];
   }
 
   {
-    const std::string ns_str = header.substr(4, 2);
+    const std::string ns_str = header.substr(8, 2);
     const char* ns_c = ns_str.c_str();
-    nscount = ntohs(*ns_c);
+    nscount = (ns_c[0] << 8) | ns_c[1];
   }
 
   {
-    const std::string ar_str = header.substr(4, 2);
+    const std::string ar_str = header.substr(10, 2);
     const char* ar_c = ar_str.c_str();
-    arcount = ntohs(*ar_c);
+    arcount = (ar_c[0] << 8) | ar_c[1];
   }
 
   mMsgID = id;
