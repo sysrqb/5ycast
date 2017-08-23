@@ -359,6 +359,8 @@ protected:
                     std::string& name, std::uint8_t &nlen);
 
 public:
+  DNSQuestion() {}
+  DNSQuestion(DNSQuestion&&);
   bool ProcessQuestion(const char* const m, std::size_t mlen,
                        std::size_t& offset);
   std::vector<std::string> GetQNames() const { return mQNames; }

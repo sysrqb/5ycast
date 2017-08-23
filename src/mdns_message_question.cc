@@ -2,6 +2,13 @@
 
 namespace dns_message {
 
+DNSQuestion::DNSQuestion(DNSQuestion&& q)
+{
+  mQNames = std::move(q.mQNames);
+  mQCode = q.mQCode;
+  mQClass = q.mQClass;
+}
+
 bool DNSQuestion::ProcessQName(const char* const m, std::size_t mlen,
                                std::string &name, std::uint8_t &nlen)
 {
