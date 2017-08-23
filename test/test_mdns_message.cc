@@ -191,5 +191,78 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsg) {
   delete dnsHeader;
 }
 
+TEST(DNSQuestionTest, ParseQuestion) {
+  char* input;
+  bool result;
+  DNSQuestion* dnsQuestion;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = (char* )"12";
+  mlen = 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_FALSE(result);
+  delete dnsQuestion;
+
+  input = (char* )"\x02""2\0\0";
+  mlen = 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_FALSE(result);
+  delete dnsQuestion;
+
+  input = (char* )"\x02""34\0\0";
+  mlen = 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_FALSE(result);
+  delete dnsQuestion;
+
+  input = (char* )"\x02""34\0\0\0\0";
+  mlen = 1 + 2 + 2 + 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_FALSE(result);
+  delete dnsQuestion;
+
+  input = (char* )"\x02""34\0\0\0\0\0";
+  mlen = 1 + 2 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("34"));
+  EXPECT_EQ(dnsQuestion->GetQCode(), 0);
+  EXPECT_EQ(dnsQuestion->GetQClass(), 0);
+  delete dnsQuestion;
+
+  input = (char* )"\x02""34\0\0\1\0\0\x10""0123456789abcdef\0\0\xc\0\0";
+  mlen = 1 + 2 + 1 + 2 + 2 + 1 + 0x10 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("34"));
+  EXPECT_EQ(dnsQuestion->GetQCode(), 1);
+  EXPECT_EQ(dnsQuestion->GetQClass(), 0);
+  delete dnsQuestion;
+
+  input = (char* )"\x10""0123456789abcdef\0\0\xc\1\0";
+  mlen = 1 + 0x10 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion = new DNSQuestion();
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("0123456789abcdef"));
+  EXPECT_EQ(dnsQuestion->GetQCode(), 0x0c);
+  EXPECT_EQ(dnsQuestion->GetQClass(), 0x01 << 8);
+  delete dnsQuestion;
+}
+
 } // namespace testing
 } // namespace dns_message

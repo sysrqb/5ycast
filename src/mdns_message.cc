@@ -31,4 +31,21 @@ bool DNSMessage::ProcessMessage()
   return true;
 }
 
+bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
+                                   std::uint16_t qcount)
+{
+  std::size_t i;
+  std::size_t offset = 0;
+  std::vector<DNSQuestion> qs;
+  for (i = 0; i < qcount; i++) {
+    DNSQuestion question;
+    if (!question.ProcessQuestion(m, mlen, offset)) {
+      return false;
+    }
+    qs.push_back(std::move(question));
+  }
+  mQuestions = std::move(qs);
+  return true;
+}
+
 } // namespace dns_message

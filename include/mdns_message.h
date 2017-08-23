@@ -353,6 +353,17 @@ private:
        packet).
   */
   std::uint16_t mQClass;
+
+protected:
+  bool ProcessQName(const char* const m, std::size_t mlen,
+                    std::string& name, std::uint8_t &nlen);
+
+public:
+  bool ProcessQuestion(const char* const m, std::size_t mlen,
+                       std::size_t& offset);
+  std::vector<std::string> GetQNames() const { return mQNames; }
+  std::uint16_t GetQCode() const { return mQCode; }
+  std::uint16_t GetQClass() const { return mQClass; }
 };
 
 class DNSRData {
@@ -484,6 +495,10 @@ private:
   std::vector<DNSQuestion> mQuestions;
   DNSRR* mRRSection[3];
   std::string mRawMsg;
+
+protected:
+  bool ProcessQuestions(const char* const m, std::size_t mlen,
+                        std::uint16_t qcount);
 
 public:
   // Throws std::bad_alloc when allocation fails
