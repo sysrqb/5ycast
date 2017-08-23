@@ -25,14 +25,20 @@ DNSMessage::~DNSMessage()
 
 bool DNSMessage::ProcessMessage()
 {
+  const std::uint8_t header_length = 12;
   if (!mHeader->ProcessHeader(mRawMsg.c_str(), mRawMsg.length())) {
+    return false;
+  }
+  if (!ProcessQuestions(mRawMsg.c_str() + header_length,
+                       mRawMsg.length() - header_length,
+                       mHeader->GetQDCount())) {
     return false;
   }
   return true;
 }
 
 bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
-                                   std::uint16_t qcount)
+                                  std::uint16_t qcount)
 {
   std::size_t i;
   std::size_t offset = 0;

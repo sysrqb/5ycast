@@ -111,6 +111,18 @@ TEST(DNSMessageTest, ProcessMessageRawMsg11NullAnd40Z) {
   delete dnsMsg;
 }
 
+TEST(DNSMessageTest, ProcessQuestionsHeaderAndQuestion) {
+  char* input;
+  bool result;
+  DNSMessage* dnsMsg;
+
+  input = (char* )"\0\0\0\0\0\x01\0\0\0\0\0\0\x10""0123456789abcdef\0\0\xc\1\0";
+  dnsMsg = new DNSMessage(input, 34);
+  result = dnsMsg->ProcessMessage();
+  EXPECT_TRUE(result);
+  delete dnsMsg;
+}
+
 TEST(DNSHeaderTest, ProcessHeaderRawMsgNull) {
   char* input;
   bool result;
