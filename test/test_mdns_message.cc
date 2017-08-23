@@ -123,6 +123,18 @@ TEST(DNSMessageTest, ProcessQuestionsHeaderAndQuestion) {
   delete dnsMsg;
 }
 
+TEST(DNSMessageTest, ProcessQuestionsHeaderAnd2Question) {
+  char* input;
+  bool result;
+  DNSMessage* dnsMsg;
+
+  input = (char* )"\0\0\0\0\0\x01\0\0\0\0\0\0\x02""34\0\0\1\0\0\x10""0123456789abcdef\0\0\xc\1\0";
+  dnsMsg = new DNSMessage(input, 42);
+  result = dnsMsg->ProcessMessage();
+  EXPECT_TRUE(result);
+  delete dnsMsg;
+}
+
 TEST(DNSHeaderTest, ProcessHeaderRawMsgNull) {
   char* input;
   bool result;
