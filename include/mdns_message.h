@@ -272,8 +272,8 @@ private:
   /* RFC 1035:
        a domain name represented as a sequence of labels, where
        each label consists of a length octet followed by that
-       number of octets.  The domain name terminates with the
-       zero length octet for the null label of the root.  Note
+       number of octets. The domain name terminates with the
+       zero length octet for the null label of the root. Note
        that this field may be an odd number of octets; no
        padding is used.
   */
