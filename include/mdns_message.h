@@ -375,6 +375,42 @@ private:
 };
 
 class DNSRR {
+public:
+  enum eRRType : std::uint16_t {
+    /* a host address */
+    RR_A = 1,
+    /* an authoritative name server */
+    RR_NS,
+    /* a mail destination (Obsolete - use MX) */
+    RR_MD,
+    /* a mail forwarder (Obsolete - use MX) */
+    RR_MF,
+    /* the canonical name for an alias */
+    RR_CNAME,
+    /* marks the start of a zone of authority */
+    RR_SOA,
+    /* a mailbox domain name (EXPERIMENTAL) */
+    RR_MB,
+    /* a mail group member (EXPERIMENTAL) */
+    RR_MG,
+    /* a mail rename domain name (EXPERIMENTAL) */
+    RR_MR,
+    /* a null RR (EXPERIMENTAL) */
+    RR_NULL,
+    /* a well known service description */
+    RR_WKS,
+    /* a domain name pointer */
+    RR_PTR,
+    /* host information */
+    RR_HINFO,
+    /* mailbox or mail list information */
+    RR_MINFO,
+    /* mail exchange */
+    RR_MX,
+    /* text strings */
+    RR_TXT,
+  };
+
 private:
   /* The answer, authority, and additional sections all share the same
      format: a variable number of resource records, where the number
@@ -413,40 +449,7 @@ private:
 
     See comment documenting qtype for values.
   */
-  enum eRRType : std::uint16_t {
-    /* a host address */
-    RR_A = 1,
-    /* an authoritative name server */
-    RR_NS,
-    /* a mail destination (Obsolete - use MX) */
-    RR_MD,
-    /* a mail forwarder (Obsolete - use MX) */
-    RR_MF,
-    /* the canonical name for an alias */
-    RR_CNAME,
-    /* marks the start of a zone of authority */
-    RR_SOA,
-    /* a mailbox domain name (EXPERIMENTAL) */
-    RR_MB,
-    /* a mail group member (EXPERIMENTAL) */
-    RR_MG,
-    /* a mail rename domain name (EXPERIMENTAL) */
-    RR_MR,
-    /* a null RR (EXPERIMENTAL) */
-    RR_NULL,
-    /* a well known service description */
-    RR_WKS,
-    /* a domain name pointer */
-    RR_PTR,
-    /* host information */
-    RR_HINFO,
-    /* mailbox or mail list information */
-    RR_MINFO,
-    /* mail exchange */
-    RR_MX,
-    /* text strings */
-    RR_TXT,
-  } mRRType;
+  enum eRRType mRRType;
 
   /* RFC 1035:
        two octets which specify the class of the data in the RDATA
