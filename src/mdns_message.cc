@@ -54,4 +54,33 @@ bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
   return true;
 }
 
+bool DNSMessage::ProcessName(const char* const m, std::size_t mlen,
+                             std::string& name, std::uint8_t &nlen)
+{
+  if (m == nullptr) {
+    return false;
+  }
+  if (mlen == 0) {
+    return false;
+  }
+  nlen = m[0];
+  if (nlen == 0) {
+    name = "";
+    return true;
+  }
+  if ((nlen & 0xC0) == 0xC0) {
+    // Capture the message compression. nlen is 1 because the on return
+    // It is expected the caller adds 1 so it accounts for the 1 byte
+    // length value.
+    nlen = 1;
+    name = std::string(m, nlen + 1);
+    return true;
+  }
+  if (nlen > (mlen - 1)) {
+    return false;
+  }
+  name = std::string((m+1), nlen);
+  return true;
+}
+
 } // namespace dns_message

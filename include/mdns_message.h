@@ -354,10 +354,6 @@ private:
   */
   std::uint16_t mQClass;
 
-protected:
-  bool ProcessQName(const char* const m, std::size_t mlen,
-                    std::string& name, std::uint8_t &nlen);
-
 public:
   DNSQuestion() {}
   DNSQuestion(DNSQuestion&&);

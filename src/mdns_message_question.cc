@@ -9,34 +9,6 @@ DNSQuestion::DNSQuestion(DNSQuestion&& q)
   mQClass = q.mQClass;
 }
 
-bool DNSQuestion::ProcessQName(const char* const m, std::size_t mlen,
-                               std::string &name, std::uint8_t &nlen)
-{
-  if (m == nullptr) {
-    return false;
-  }
-  if (mlen == 0) {
-    return false;
-  }
-  nlen = m[0];
-  if (nlen == 0) {
-    name = "";
-    return true;
-  }
-  if ((nlen & 0xC0) == 0xC0) {
-    // Capture the message compression. nlen is 1 because the on return
-    // ProcessQuestion adds 1 so it accounts for the 1 byte length value.
-    nlen = 1;
-    name = std::string(m, nlen + 1);
-    return true;
-  }
-  if (nlen > (mlen - 1)) {
-    return false;
-  }
-  name = std::string((m+1), nlen);
-  return true;
-}
-
 bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
                                   std::size_t& offset)
 {
@@ -48,7 +20,10 @@ bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
   std::string name;
   std::uint8_t nlen;
   std::uint16_t next_label = offset;
-  while (ProcessQName(m + next_label, mlen - next_label, name, nlen)) {
+  while (DNSMessage::ProcessName(m + next_label,
+                                 mlen - next_label,
+                                 name,
+                                 nlen)) {
     qnames.push_back(std::move(name));
     next_label += nlen + 1;
     if (nlen == 0) {
