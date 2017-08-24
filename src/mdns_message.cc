@@ -55,10 +55,9 @@ bool DNSMessage::ProcessMessage()
 }
 
 bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
-                                  std::uint16_t qcount)
+                                  std::uint16_t qcount, std::size_t& offset)
 {
   std::size_t i;
-  std::size_t offset = 0;
   std::vector<DNSQuestion> qs;
   for (i = 0; i < qcount; i++) {
     DNSQuestion question;
@@ -68,6 +67,23 @@ bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
     qs.push_back(std::move(question));
   }
   mQuestions = std::move(qs);
+  return true;
+}
+
+bool DNSMessage::ProcessRRs(const char* const m, std::size_t mlen,
+                            std::uint16_t count, std::size_t& offset,
+                            std::uint8_t section)
+{
+  std::size_t i;
+  std::vector<DNSRR> rrs;
+  for (i = 0; i < count; i++) {
+    DNSRR rr;
+    if (!rr.ProcessRR(m, mlen, offset)) {
+      return false;
+    }
+    rrs.push_back(std::move(rr));
+  }
+  mRRSection[section] = std::move(rrs);
   return true;
 }
 

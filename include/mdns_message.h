@@ -372,6 +372,12 @@ public:
 class DNSPtrRData : DNSRData {
 private:
   std::vector<std::string> mPtrDNames;
+
+public:
+  void AddPtrName(const std::string&);
+  void AddPtrNames(const std::vector<std::string>&&);
+  bool ProcessNames(const char* const m, std::size_t mlen,
+                    std::size_t& offset);
 };
 
 class DNSRR {
@@ -496,6 +502,8 @@ public:
   std::uint16_t GetTTL() const { return mTTL; }
   std::uint16_t GetRDLength() const { return mRDLength; }
   DNSRData GetRData() const { return mRData; }
+  bool ProcessRR(const char* const m, std::size_t mlen,
+                 std::size_t& offset);
 };
 
 class DNSMessage {
@@ -507,7 +515,10 @@ private:
 
 protected:
   bool ProcessQuestions(const char* const m, std::size_t mlen,
-                        std::uint16_t qcount);
+                        std::uint16_t qcount, std::size_t& offset);
+  bool ProcessRRs(const char* const m, std::size_t mlen,
+                  std::uint16_t ancount, std::size_t& offset,
+                  std::uint8_t section);
 
 public:
   // Throws std::bad_alloc when allocation fails
@@ -517,6 +528,8 @@ public:
   ~DNSMessage();
   const std::string GetRawMessage() const { return mRawMsg; }
   bool ProcessMessage();
+  static bool ProcessName(const char* const m, std::size_t mlen,
+                          std::string& name, std::uint8_t &nlen);
 };
 
 } // namespace dns_message
