@@ -394,7 +394,7 @@ TEST(DNSQuestionTest, ParseQuestionLength2Label345Nulls) {
   result = dnsQuestion->ProcessQuestion(input, mlen, offset);
   EXPECT_TRUE(result);
   EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("34"));
-  EXPECT_EQ(dnsQuestion->GetQCode(), 0);
+  EXPECT_EQ(dnsQuestion->GetQType(), 0);
   EXPECT_EQ(dnsQuestion->GetQClass(), 0);
   delete dnsQuestion;
 }
@@ -413,7 +413,7 @@ TEST(DNSQuestionTest, ParseQuestionLength2Label34Length0Null1NullNullLength10) {
   result = dnsQuestion->ProcessQuestion(input, mlen, offset);
   EXPECT_TRUE(result);
   EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("34"));
-  EXPECT_EQ(dnsQuestion->GetQCode(), 1);
+  EXPECT_EQ(dnsQuestion->GetQType(), 1);
   EXPECT_EQ(dnsQuestion->GetQClass(), 0);
   delete dnsQuestion;
 }
@@ -432,7 +432,7 @@ TEST(DNSQuestionTest, ParseQuestionLength0x10label2Nulls0xc1Null) {
   result = dnsQuestion->ProcessQuestion(input, mlen, offset);
   EXPECT_TRUE(result);
   EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("0123456789abcdef"));
-  EXPECT_EQ(dnsQuestion->GetQCode(), 0x0c);
+  EXPECT_EQ(dnsQuestion->GetQType(), 0x0c);
   EXPECT_EQ(dnsQuestion->GetQClass(), 0x01 << 8);
   delete dnsQuestion;
 }

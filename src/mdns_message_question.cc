@@ -5,7 +5,7 @@ namespace dns_message {
 DNSQuestion::DNSQuestion(DNSQuestion&& q)
 {
   mQNames = std::move(q.mQNames);
-  mQCode = q.mQCode;
+  mQType = q.mQType;
   mQClass = q.mQClass;
 }
 
@@ -57,8 +57,8 @@ bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
         return false;
       }
       mQNames = std::move(qnames);
-      mQCode = (std::uint8_t(m[next_label++]) << 8);
-      mQCode |= std::uint8_t(m[next_label++]);
+      mQType = (std::uint8_t(m[next_label++]) << 8);
+      mQType |= std::uint8_t(m[next_label++]);
       mQClass = (std::uint8_t(m[next_label++]) << 8);
       mQClass |= std::uint8_t(m[next_label++]);
       offset = next_label;

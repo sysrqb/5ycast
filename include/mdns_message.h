@@ -322,7 +322,7 @@ private:
        bit of the qclass field is used to indicate that unicast
        responses are preferred for this particular question.
   */
-  std::uint16_t mQCode;
+  std::uint16_t mQType;
 
   /* RFC 1035:
        a two octet code that specifies the class of the query.
@@ -364,7 +364,7 @@ public:
   bool ProcessQuestion(const char* const m, std::size_t mlen,
                        std::size_t& offset);
   std::vector<std::string> GetQNames() const { return mQNames; }
-  std::uint16_t GetQCode() const { return mQCode; }
+  std::uint16_t GetQType() const { return mQType; }
   std::uint16_t GetQClass() const { return mQClass; }
 };
 
