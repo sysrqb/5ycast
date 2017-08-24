@@ -446,7 +446,7 @@ private:
     RR_MX,
     /* text strings */
     RR_TXT,
-  };
+  } mRRType;
 
   /* RFC 1035:
        two octets which specify the class of the data in the RDATA
@@ -485,6 +485,14 @@ private:
        octet ARPA Internet address.
   */
   DNSRData mRData;
+
+public:
+  std::string GetName() const { return mName; }
+  std::uint16_t GetRRType() const { return mRRType; }
+  std::uint16_t GetRRClass() const { return mRRClass; }
+  std::uint16_t GetTTL() const { return mTTL; }
+  std::uint16_t GetRDLength() const { return mRDLength; }
+  DNSRData GetRData() const { return mRData; }
 };
 
 class DNSMessage {
