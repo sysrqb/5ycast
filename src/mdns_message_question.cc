@@ -28,7 +28,6 @@ bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
     next_label += nlen + 1;
     if (nlen == 0) {
       if (mlen - next_label < 4) {
-        while (qnames.size() > 0) { qnames.pop_back(); }
         return false;
       }
       mQNames = std::move(qnames);
