@@ -7,9 +7,6 @@ namespace dns_message {
 DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mRawMsg(m, mlen)
 {
   mHeader = new DNSHeader();
-  mRRSection[0] = new DNSRR();
-  mRRSection[1] = new DNSRR();
-  mRRSection[2] = new DNSRR();
 }
 
 DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, std::strlen(m)) { }
@@ -17,21 +14,41 @@ DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, std::strlen(m)) { }
 DNSMessage::~DNSMessage()
 {
   delete mHeader;
-  delete mRRSection[0];
-  delete mRRSection[1];
-  delete mRRSection[2];
 }
 
 
 bool DNSMessage::ProcessMessage()
 {
   const std::uint8_t header_length = 12;
+  const std::uint8_t an_section = 0;
+  const std::uint8_t ns_section = 1;
+  const std::uint8_t ar_section = 2;
+  std::size_t offset = 0;
   if (!mHeader->ProcessHeader(mRawMsg.c_str(), mRawMsg.length())) {
     return false;
   }
-  if (!ProcessQuestions(mRawMsg.c_str() + header_length,
-                       mRawMsg.length() - header_length,
-                       mHeader->GetQDCount())) {
+  if (mHeader->GetQDCount() > 0 &&
+      !ProcessQuestions(mRawMsg.c_str() + header_length,
+                        mRawMsg.length() - header_length,
+                        mHeader->GetQDCount(), offset)) {
+    return false;
+  }
+  if (mHeader->GetANCount() > 0 &&
+      !ProcessRRs(mRawMsg.c_str() + header_length,
+                  mRawMsg.length() - header_length,
+                  mHeader->GetANCount(), offset, an_section)) {
+    return false;
+  }
+  if (mHeader->GetNSCount() > 0 &&
+      !ProcessRRs(mRawMsg.c_str() + header_length,
+                  mRawMsg.length() - header_length,
+                  mHeader->GetNSCount(), offset, ns_section)) {
+    return false;
+  }
+  if (mHeader->GetARCount() > 0 &&
+      !ProcessRRs(mRawMsg.c_str() + header_length,
+                  mRawMsg.length() - header_length,
+                  mHeader->GetARCount(), offset, ar_section)) {
     return false;
   }
   return true;

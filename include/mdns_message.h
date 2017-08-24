@@ -371,7 +371,7 @@ public:
 
 class DNSPtrRData : DNSRData {
 private:
-  std::string mPtrDName;
+  std::vector<std::string> mPtrDNames;
 };
 
 class DNSRR {
@@ -441,7 +441,7 @@ private:
   /* RFC 1035:
        a domain name to which this resource record pertains.
   */
-  std::string mName;
+  std::vector<std::string> mName;
 
   /* RFC 1035:
        two octets containing one of the RR type codes. This field
@@ -490,7 +490,7 @@ private:
   DNSRData mRData;
 
 public:
-  std::string GetName() const { return mName; }
+  std::vector<std::string> GetName() const { return mName; }
   std::uint16_t GetRRType() const { return mRRType; }
   std::uint16_t GetRRClass() const { return mRRClass; }
   std::uint16_t GetTTL() const { return mTTL; }
@@ -502,7 +502,7 @@ class DNSMessage {
 private:
   DNSHeader* mHeader;
   std::vector<DNSQuestion> mQuestions;
-  DNSRR* mRRSection[3];
+  std::vector<DNSRR> mRRSection[3];
   std::string mRawMsg;
 
 protected:
