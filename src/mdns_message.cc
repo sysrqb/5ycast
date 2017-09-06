@@ -1,21 +1,16 @@
+#include <cassert>
 #include <cstring>
 
 #include "mdns_message.h"
 
 namespace dns_message {
 
-DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mRawMsg(m, mlen)
+DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mRawMsg(m, mlen),
+                                                                      mHeader(new DNSHeader)
 {
-  mHeader = new DNSHeader();
 }
 
 DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, std::strlen(m)) { }
-
-DNSMessage::~DNSMessage()
-{
-  delete mHeader;
-}
-
 
 bool DNSMessage::ProcessMessage()
 {

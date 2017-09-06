@@ -1,6 +1,7 @@
 #ifndef MDNS_MESSAGE_H
 #define MDNS_MESSAGE_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -508,7 +509,7 @@ public:
 
 class DNSMessage {
 private:
-  DNSHeader* mHeader;
+  std::unique_ptr<DNSHeader> mHeader;
   std::vector<DNSQuestion> mQuestions;
   std::vector<DNSRR> mRRSection[3];
   std::string mRawMsg;
@@ -525,7 +526,7 @@ public:
   // m MUST not be NULL or nullptr, undefined behavior
   DNSMessage(const char* const m, const std::size_t mlen);
   DNSMessage(const char* const m);
-  ~DNSMessage();
+  ~DNSMessage() = default;
   const std::string GetRawMessage() const { return mRawMsg; }
   bool ProcessMessage();
   static bool ProcessName(const char* const m, std::size_t mlen,
