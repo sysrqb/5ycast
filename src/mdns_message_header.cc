@@ -4,6 +4,9 @@
 
 namespace dns_message {
 
+// Parse the header of the message
+// m: string for parsing
+// mlen: length of m
 bool DNSHeader::ProcessHeader(const char* const m, const std::size_t mlen)
 {
   std::uint16_t id;

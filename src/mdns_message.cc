@@ -5,13 +5,19 @@
 
 namespace dns_message {
 
+// m: string for parsing
+// mlen: length of m
 DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mRawMsg(m, mlen),
                                                                       mHeader(new DNSHeader)
 {
 }
 
+// Delegating constructor
+// m: string for parsing, cannot contain nul characters
 DNSMessage::DNSMessage(const char* const m) : DNSMessage(m, std::strlen(m)) { }
 
+// Process each section of the dns packet until any failure occurs or the
+// message is parsed successfully.
 bool DNSMessage::ProcessMessage()
 {
   const std::uint8_t header_length = 12;
@@ -49,6 +55,11 @@ bool DNSMessage::ProcessMessage()
   return true;
 }
 
+// Parse the question section of the message
+// m: string for parsing
+// mlen: length of m
+// qcount: number of questions encapsulated in this section
+// offset: Tracks position within m of processing
 bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
                                   std::uint16_t qcount, std::size_t& offset)
 {
@@ -65,6 +76,12 @@ bool DNSMessage::ProcessQuestions(const char* const m, std::size_t mlen,
   return true;
 }
 
+// Parse the resource record sections of the message
+// m: string for parsing
+// mlen: length of m
+// count: number of questions encapsulated in this section
+// offset: Tracks position within m of processing
+// section: Specifies the section of the message (0: an, 1: ns, 2: ar)
 bool DNSMessage::ProcessRRs(const char* const m, std::size_t mlen,
                             std::uint16_t count, std::size_t& offset,
                             std::uint8_t section)
@@ -82,6 +99,11 @@ bool DNSMessage::ProcessRRs(const char* const m, std::size_t mlen,
   return true;
 }
 
+// static - Parse the next name in the message
+// m: pointers at the location in the string for parsing
+// mlen: length of m
+// name: string ref where string is returned, on success
+// nlen: length of name as specified within m, or 1 if name is compressed
 bool DNSMessage::ProcessName(const char* const m, std::size_t mlen,
                              std::string& name, std::uint8_t &nlen)
 {

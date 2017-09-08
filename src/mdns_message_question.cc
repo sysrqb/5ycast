@@ -9,6 +9,10 @@ DNSQuestion::DNSQuestion(DNSQuestion&& q)
   mQClass = q.mQClass;
 }
 
+// Parse the question from the message
+// m: string for parsing
+// mlen: length of m
+// offset: position within m where parsing should begin
 bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
                                   std::size_t& offset)
 {
