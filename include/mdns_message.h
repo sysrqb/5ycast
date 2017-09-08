@@ -368,17 +368,18 @@ public:
 class DNSRData {
 public:
   DNSRData() = default;
+  virtual bool ProcessNames(const char* const m, std::size_t mlen,
+                            std::size_t& offset) {}
 };
 
-class DNSPtrRData : DNSRData {
+class DNSPtrRData final : DNSRData {
 private:
   std::vector<std::string> mPtrDNames;
 
 public:
-  void AddPtrName(const std::string&);
   void AddPtrNames(const std::vector<std::string>&&);
   bool ProcessNames(const char* const m, std::size_t mlen,
-                    std::size_t& offset);
+                    std::size_t& offset) override final;
 };
 
 class DNSRR {
