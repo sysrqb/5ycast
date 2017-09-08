@@ -233,7 +233,7 @@ private:
   std::uint16_t mARCount;
 
 public:
-  DNSHeader() {}
+  DNSHeader() = default;
   bool ProcessHeader(const char* const m, const std::size_t mlen);
   bool ProcessHeader(const char* const m);
   std::uint16_t GetMsgID() const { return mMsgID; }
@@ -356,7 +356,7 @@ private:
   std::uint16_t mQClass;
 
 public:
-  DNSQuestion() {}
+  DNSQuestion() = default;
   DNSQuestion(DNSQuestion&&);
   bool ProcessQuestion(const char* const m, std::size_t mlen,
                        std::size_t& offset);
@@ -367,7 +367,7 @@ public:
 
 class DNSRData {
 public:
-  DNSRData() {}
+  DNSRData() = default;
 };
 
 class DNSPtrRData : DNSRData {
