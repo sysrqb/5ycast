@@ -70,7 +70,7 @@ bool DNSRR::ProcessRR(const char* const m, std::size_t mlen,
   std::uint16_t rrclass;
   std::uint32_t rrttl;
   std::uint16_t rrdlength;
-  DNSRData *rdata;
+  DNSRData* rdata;
 
   if (mlen < minimum_rr_length) {
     return false;

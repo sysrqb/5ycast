@@ -509,7 +509,7 @@ private:
        if the TYPE is A and the CLASS is IN, the RDATA field is a 4
        octet ARPA Internet address.
   */
-  DNSRData mRData;
+  std::unique_ptr<DNSRData> mRData;
 
 public:
   std::vector<std::string> GetName() const { return mName; }
@@ -517,7 +517,7 @@ public:
   std::uint16_t GetRRClass() const { return mRRClass; }
   std::uint16_t GetTTL() const { return mTTL; }
   std::uint16_t GetRDLength() const { return mRDLength; }
-  DNSRData GetRData() const { return mRData; }
+  const DNSRData* GetRData() const { return mRData.get(); }
   bool ProcessRR(const char* const m, std::size_t mlen,
                  std::size_t& offset);
 };
