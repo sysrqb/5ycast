@@ -386,7 +386,7 @@ public:
   DNSRData() = default;
 };
 
-class DNSPtrRData final : DNSRData {
+class DNSPtrRData final : public DNSRData {
 private:
   std::vector<std::string> mPtrDNames;
 
