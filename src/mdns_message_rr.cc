@@ -34,7 +34,6 @@ static bool processNames(const char* const m, std::size_t mlen,
                                  mlen - next_label,
                                  name,
                                  nlen)) {
-    names.push_back(std::move(name));
     next_label += nlen + 1;
     if (nlen == 0) {
       if (mlen - next_label < 4) {
@@ -49,6 +48,7 @@ static bool processNames(const char* const m, std::size_t mlen,
     if (mlen < next_label) {
       return false;
     }
+    names.push_back(std::move(name));
   }
 
   return false;
