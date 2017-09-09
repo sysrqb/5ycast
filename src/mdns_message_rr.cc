@@ -54,6 +54,57 @@ static bool processNames(const char* const m, std::size_t mlen,
   return false;
 }
 
+bool DNSRR::ProcessPtrRData(DNSRData** rdata, const char* const m,
+                            std::size_t mlen, std::size_t& offset,
+                            std::uint16_t rrdlength)
+{
+  const std::size_t saved_offset = offset;
+  std::vector<std::string> dnames;
+  if (!processNames(m, mlen, offset, dnames)) {
+    return false;
+  }
+
+  if ((offset - saved_offset) != rrdlength) {
+    return false;
+  }
+  *rdata = new DNSPtrRData(std::move(dnames));
+  return true;
+}
+
+bool DNSRR::ProcessRData(DNSRData** rdata, const char* const m,
+                         std::size_t mlen, std::size_t& offset,
+                         eRRType type, std::uint16_t rrdlength)
+{
+  if (m == nullptr) {
+    return false;
+  }
+  if (rrdlength == 0) {
+    return false;
+  }
+  switch (type) {
+    case RR_PTR: {
+      return ProcessPtrRData(rdata, m, mlen, offset, rrdlength);
+    }
+    case RR_A:
+    case RR_NS:
+    case RR_MD:
+    case RR_MF:
+    case RR_CNAME:
+    case RR_SOA:
+    case RR_MB:
+    case RR_MG:
+    case RR_MR:
+    case RR_NULL:
+    case RR_WKS:
+    case RR_HINFO:
+    case RR_MINFO:
+    case RR_MX:
+    case RR_TXT:
+      ;
+  }
+  return false;
+}
+
 // Parse the resource record section of the message
 // m: string for parsing
 // mlen: length of m

@@ -511,6 +511,13 @@ private:
   */
   std::unique_ptr<DNSRData> mRData;
 
+protected:
+  bool ProcessRData(DNSRData** rdata, const char* const m, std::size_t mlen,
+                    std::size_t& offset, eRRType type,
+                    std::uint16_t rrdlength);
+  bool ProcessPtrRData(DNSRData** rdata, const char* const m, std::size_t mlen,
+                       std::size_t& offset, std::uint16_t rrdlength);
+
 public:
   std::vector<std::string> GetName() const { return mName; }
   std::uint16_t GetRRType() const { return mRRType; }
