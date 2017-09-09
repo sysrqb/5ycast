@@ -36,9 +36,6 @@ static bool processNames(const char* const m, std::size_t mlen,
                                  nlen)) {
     next_label += nlen + 1;
     if (nlen == 0) {
-      if (mlen - next_label < 4) {
-        return false;
-      }
       aName = std::move(names);
       offset = next_label;
       return true;

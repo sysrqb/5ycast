@@ -411,5 +411,179 @@ TEST(DNSQuestionTest, ParseQuestionLength0x10label2Nulls0xc1Null) {
   EXPECT_EQ(dnsQuestion->GetQClass(), 0x01 << 8);
 }
 
+TEST(DNSRRTest, MalformedEmpty) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = (char* )"";
+  mlen = 0;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedTooShort) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x00\x01\x02\x03");
+  mlen = 4;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedTooShort2) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x01\x02\x02\x03\x03\x04\x04\x05\x05");
+  mlen = 10;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MissingRData) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x00\x01\x02\x02\x03\x03\x04\x04\x05\x05\x06");
+  mlen = 11;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedRData) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x0c\x00\x01\x00\x00\x00\x05\x06");
+  mlen = 11;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedRData2) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x0c\x00\x01\x00\x00\x00\x05\x01\x02\x03\x04");
+  mlen = 15;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedRData3) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x0c\x00\x01\x00\x00\x00\x05\x04\x01\x02\x03\x04\x01");
+  mlen = 16;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  EXPECT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedRData4) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x00\x0c\x00\x01\x00\x00\x00\x04\x06\x04\x01\x02\x03\x04");
+  mlen = 17;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  ASSERT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedRData5) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x0c\x00\x01\x00\x00\x00\x04\x06\x04\x01\x02\x03\x04\x00");
+  mlen = 17;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  ASSERT_FALSE(result);
+}
+
+TEST(DNSRRTest, MalformedRData6) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x0c\x00\x01\x00\x00\x00\x04\x06\x04\x01\x02\x03\x04");
+  mlen = 16;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  ASSERT_FALSE(result);
+}
+
+TEST(DNSRRTest, WellformedRData) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSRR> rr;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>("\x01\x41\x00\x00\x0c\x00\x01\x00\x00\x00\x04\x00\x06\x04\x01\x02\x03\x04\x00");
+  mlen = 19;
+  offset = 0;
+  rr.reset(new DNSRR());
+  result = rr->ProcessRR(input, mlen, offset);
+  ASSERT_TRUE(result);
+  ASSERT_EQ(rr->GetName().size(), 1);
+  EXPECT_EQ(rr->GetName().at(0), std::string("A", 1));
+  EXPECT_EQ(rr->GetRRType(), 0x0c);
+  EXPECT_EQ(rr->GetRRClass(), 0x01);
+  EXPECT_EQ(rr->GetTTL(), 0x04);
+  EXPECT_EQ(rr->GetRDLength(), 0x06);
+  const DNSPtrRData* ptr = static_cast<const DNSPtrRData*>(rr->GetRData());
+  ASSERT_EQ(ptr->GetDName().size(), 1);
+  EXPECT_EQ(ptr->GetDName().at(0), std::string("\x01\x02\x03\x04", 4));
+}
+
 } // namespace testing
 } // namespace dns_message
