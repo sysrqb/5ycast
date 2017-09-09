@@ -92,7 +92,7 @@ bool DNSRR::ProcessRR(const char* const m, std::size_t mlen,
 
 void DNSPtrRData::AddPtrNames(const std::vector<std::string>&& names)
 {
-  mPtrDNames = names;
+  mPtrDName = names;
 }
 
 } // namespace dns_message

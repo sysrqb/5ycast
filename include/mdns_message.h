@@ -388,10 +388,12 @@ public:
 
 class DNSPtrRData final : public DNSRData {
 private:
-  std::vector<std::string> mPtrDNames;
+  std::vector<std::string> mPtrDName;
 
 public:
+  explicit DNSPtrRData(std::vector<std::string>&& n) : mPtrDName(n) {}
   void AddPtrNames(const std::vector<std::string>&&);
+  const std::vector<std::string>& GetDName() const { return mPtrDName; }
 };
 
 class DNSRR {
