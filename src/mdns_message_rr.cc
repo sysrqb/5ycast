@@ -122,6 +122,7 @@ bool DNSRR::ProcessRR(const char* const m, std::size_t mlen,
   std::uint32_t rrttl;
   std::uint16_t rrdlength;
   DNSRData* rdata;
+  eRRType rrtype_e;
 
   if (mlen < minimum_rr_length) {
     return false;
@@ -134,11 +135,26 @@ bool DNSRR::ProcessRR(const char* const m, std::size_t mlen,
   }
   rrtype = (m[offset++] << 8) | m[offset++];
   rrclass = (m[offset++] << 8) | m[offset++];
-  rrclass = (m[offset++] << 8) | m[offset++];
-  rrclass <<= 16;
-  rrclass = (m[offset++] << 8) | m[offset++];
+  rrttl = (m[offset++] << 8) | m[offset++];
+  rrttl <<= 16;
+  rrttl = (m[offset++] << 8) | m[offset++];
   rrdlength = (m[offset++] << 8) | m[offset++];
-  return false;
+  rrtype_e = eRRType(rrtype);
+
+  if (!ProcessRData(&rdata, m, mlen, offset, rrtype_e, rrdlength)) {
+    return false;
+  }
+
+  if (rdata == nullptr) {
+    return false;
+  }
+
+  mName = std::move(name);
+  mRRType = rrtype_e;
+  mRRClass = rrclass;
+  mTTL = rrttl;
+  mRDLength = rrdlength;
+  mRData.reset(rdata);
 }
 
 void DNSPtrRData::AddPtrNames(const std::vector<std::string>&& names)
