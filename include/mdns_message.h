@@ -539,8 +539,8 @@ protected:
 public:
   // Throws std::bad_alloc when allocation fails
   // m MUST not be NULL or nullptr, undefined behavior
-  DNSMessage(const char* const m, const std::size_t mlen);
-  DNSMessage(const char* const m);
+  explicit DNSMessage(const char* const m, const std::size_t mlen);
+  explicit DNSMessage(const char* const m);
   ~DNSMessage() = default;
   const std::string GetRawMessage() const { return mRawMsg; }
   bool ProcessMessage();
