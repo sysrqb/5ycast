@@ -553,6 +553,9 @@ public:
   bool ProcessMessage();
   static bool ProcessName(const char* const m, std::size_t mlen,
                           std::string& name, std::uint8_t &nlen);
+  static bool DecompressName(const char* const m, const std::size_t mlen,
+                             const std::string& name, std::string& ref);
+
 };
 
 } // namespace dns_message

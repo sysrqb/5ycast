@@ -585,5 +585,86 @@ TEST(DNSRRTest, WellformedRData) {
   EXPECT_EQ(ptr->GetDName().at(0), std::string("\x01\x02\x03\x04", 4));
 }
 
+TEST(NameCompression, BadLength) {
+  char* input;
+  std::string compressedname;
+  std::string uncompname;
+  std::size_t mlen;
+
+  input = const_cast<char*>("\x05\x00\x00\xc0\x00");
+  compressedname.assign(input + 3, 2);
+  mlen = 5;
+  ASSERT_FALSE(DNSMessage::DecompressName(input, mlen, compressedname, uncompname));
+}
+
+TEST(NameCompression, BadLength2) {
+  char* input;
+  std::string compressedname;
+  std::string uncompname;
+  std::size_t mlen;
+
+  input = const_cast<char*>("\x06\x02\x03\xc0\x00\x00");
+  compressedname.assign(input + 3, 2);
+  mlen = 6;
+  ASSERT_FALSE(DNSMessage::DecompressName(input, mlen, compressedname, uncompname));
+}
+
+TEST(NameCompression, BadOffset) {
+  char* input;
+  std::string compressedname;
+  std::string uncompname;
+  std::size_t mlen;
+
+  input = const_cast<char*>("\x05\x00\x00\xc0\x09");
+  compressedname.assign(input + 3, 2);
+  mlen = 5;
+  ASSERT_FALSE(DNSMessage::DecompressName(input, mlen, compressedname, uncompname));
+}
+
+TEST(NameCompression, SmallOffset) {
+  char* input;
+  std::string expect;
+  std::string compressedname;
+  std::string uncompname;
+  std::size_t mlen;
+
+  input = const_cast<char*>("\x00\x00\x00\xc0\x00\x00");
+  expect = "";
+  compressedname.assign(input + 3, 2);
+  mlen = 6;
+  ASSERT_TRUE(DNSMessage::DecompressName(input, mlen, compressedname, uncompname));
+  EXPECT_EQ(expect, uncompname);
+}
+
+TEST(NameCompression, SmallOffset2) {
+  char* input;
+  std::string expect;
+  std::string compressedname;
+  std::string uncompname;
+  std::size_t mlen;
+
+  input = const_cast<char*>("\x00\x00\x00\xc0\x02\x00");
+  expect = "";
+  compressedname.assign(input + 3, 2);
+  mlen = 6;
+  ASSERT_TRUE(DNSMessage::DecompressName(input, mlen, compressedname, uncompname));
+  EXPECT_EQ(expect, uncompname);
+}
+
+TEST(NameCompression, LessSmallOffset) {
+  char* input;
+  std::string expect;
+  std::string compressedname;
+  std::string uncompname;
+  std::size_t mlen;
+
+  input = const_cast<char*>("\x00\x00\x00\x00\x00\x03\x46\x4F\x4F\x00\x00\x00\x00\xc0\x05\x00");
+  expect = "FOO";
+  compressedname.assign(input + 13, 2);
+  mlen = 16;
+  ASSERT_TRUE(DNSMessage::DecompressName(input, mlen, compressedname, uncompname));
+  EXPECT_EQ(expect, uncompname);
+}
+
 } // namespace testing
 } // namespace dns_message

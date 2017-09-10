@@ -16,6 +16,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <cstdio>
 
 #include "mdns_message.h"
 
@@ -135,8 +136,8 @@ bool DNSMessage::ProcessName(const char* const m, std::size_t mlen,
     return true;
   }
   if ((nlen & 0xC0) == 0xC0) {
-    // Capture the message compression. nlen is 1 because the on return
-    // It is expected the caller adds 1 so it accounts for the 1 byte
+    // Capture the message compression. nlen is 1 because on return
+    // it is expected the caller adds 1 so it accounts for the 1 byte
     // length value.
     nlen = 1;
     name = std::string(m, nlen + 1);
@@ -146,6 +147,37 @@ bool DNSMessage::ProcessName(const char* const m, std::size_t mlen,
     return false;
   }
   name = std::string((m+1), nlen);
+  return true;
+}
+
+bool DNSMessage::DecompressName(const char* const m, const std::size_t mlen,
+                                const std::string& name, std::string& ref)
+{
+  std::string ptrstr;
+  std::uint8_t nlen;
+  const char last_byte2 = name.at(name.size()-2);
+  const char last_byte1 = name.at(name.size()-1);
+
+  if (m == nullptr) {
+    return false;
+  }
+  if ((last_byte2 & 0xC0) != 0xC0) {
+    return false;
+  }
+  // Last byte is a pointer, using message compression
+  std::uint16_t ptr = ((last_byte2 & 0x3F) << 8);
+  ptr |= last_byte1;
+  if (mlen < ptr) {
+    return false;
+  }
+  if (!ProcessName(m + ptr, mlen - ptr, ptrstr, nlen)) {
+    return false;
+  }
+  if (nlen > 1 && (ptrstr.at(nlen-2) & 0xC0) == 0xC0) {
+    // TODO We're not supporting pointer-to-pointer chaining right now.
+    return false;
+  }
+  ref = std::move(ptrstr);
   return true;
 }
 
