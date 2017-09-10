@@ -28,7 +28,8 @@ namespace mnet {
 
 // Returns -1 on failure, >= 0 on success
 static bool find_usable_socket(const char* node, const char* service,
-                              std::string& err, struct addrinfo *rp, int *fd) {
+                              std::string& err, struct addrinfo *rp, int *fd)
+{
   struct addrinfo hints;
   struct addrinfo *result;
   int sfd, s;
@@ -72,7 +73,8 @@ static bool find_usable_socket(const char* node, const char* service,
   return true;
 }
 
-bool MNet::CreateSocket(std::string& errmsg) {
+bool MNet::CreateSocket(std::string& errmsg)
+{
   std::string errmsg_r;
   struct addrinfo rp;
   int socket;
@@ -87,7 +89,8 @@ bool MNet::CreateSocket(std::string& errmsg) {
 
 // Disable message loop
 // Add mdns_addr membership
-bool MNet::DisableMulticastLoop(std::string& errmsg) {
+bool MNet::DisableMulticastLoop(std::string& errmsg)
+{
   const uint8_t loop = 0;
   if (setsockopt(mFd, IPPROTO_IP, IP_MULTICAST_LOOP,
                  &loop, sizeof(loop)) != 0) {
@@ -98,7 +101,8 @@ bool MNet::DisableMulticastLoop(std::string& errmsg) {
   return true;
 }
 
-bool MNet::AddMulticastMembership(std::string& errmsg) {
+bool MNet::AddMulticastMembership(std::string& errmsg)
+{
   const uint8_t loop = 0;
   struct sockaddr_in* ai_addr_in = reinterpret_cast<struct sockaddr_in*>(ai.ai_addr);
   const struct ip_mreq mrq {ai_addr_in->sin_addr.s_addr, INADDR_ANY};
