@@ -52,8 +52,7 @@ static bool find_usable_socket(const char* node, const char* service,
   }
 
   for (rp = result; rp != nullptr; rp = rp->ai_next) {
-    sfd = socket(rp->ai_family, rp->ai_socktype,
-    rp->ai_protocol);
+    sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
     if (sfd == -1)
       continue;
 
