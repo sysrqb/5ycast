@@ -96,7 +96,7 @@ bool MNet::DisableMulticastLoop(std::string& errmsg)
   if (setsockopt(mFd, IPPROTO_IP, IP_MULTICAST_LOOP,
                  &loop, sizeof(loop)) != 0) {
     errmsg = "Disabling multicast loop failed: ";
-    errmsg += std::string(strerror(errno)) + "\n";
+    errmsg += std::string(strerror(errno));
     return false;
   }
   return true;
@@ -110,7 +110,7 @@ bool MNet::AddMulticastMembership(std::string& errmsg)
   if (setsockopt(mFd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                  &mrq, sizeof(mrq)) != 0) {
     errmsg = "Joining the multicast group failed: ";
-    errmsg += std::string(strerror(errno)) + "\n";
+    errmsg += std::string(strerror(errno));
     return false;
   }
   return true;
