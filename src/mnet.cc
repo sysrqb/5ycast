@@ -28,10 +28,10 @@ namespace mnet {
 
 // Returns -1 on failure, >= 0 on success
 static bool find_usable_socket(const char* node, const char* service,
-                              std::string& err, struct addrinfo *rp, int *fd)
+                              std::string& err, struct addrinfo *ai, int *fd)
 {
   struct addrinfo hints;
-  struct addrinfo *result;
+  struct addrinfo *result, *rp;
   int sfd, s;
   char buf[1];
   const int sock_flags = MSG_DONTWAIT | MSG_CMSG_CLOEXEC | MSG_PEEK;
@@ -68,8 +68,9 @@ static bool find_usable_socket(const char* node, const char* service,
     err.assign("none found");
     return false;
   }
-
+  memcpy(ai, rp, sizeof(*ai));
   *fd = sfd;
+
   return true;
 }
 
