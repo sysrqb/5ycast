@@ -107,7 +107,6 @@ bool MNet::DisableMulticastLoop(std::string& errmsg)
 
 bool MNet::AddMulticastMembership(std::string& errmsg)
 {
-  const uint8_t loop = 0;
   struct sockaddr_in sin;
   socklen_t sin_len = sizeof(sin);
   if (getsockname(mFd, reinterpret_cast<sockaddr*>(&sin), &sin_len)) {
@@ -140,7 +139,6 @@ bool MNet::AddMulticastMembership(std::string& errmsg)
 
 bool MNet::Poll(std::string& errmsg) const
 {
-  uint8_t revents;
   struct pollfd pfd {mFd, POLLIN|POLLOUT, 0};
   int count = poll(&pfd, 1, 0);
   if (count == -1) {
