@@ -17,6 +17,11 @@
 #ifndef MNET_H
 #define MNET_H
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+
+
 namespace mnet {
 
 class MNet {
