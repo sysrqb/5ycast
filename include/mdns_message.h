@@ -21,6 +21,9 @@
 #include <string>
 #include <vector>
 
+// Needs C++14 support
+//#include <gsl/gsl>
+
 namespace dns_message {
 
 class DNSHeader;
