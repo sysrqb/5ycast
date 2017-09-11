@@ -37,8 +37,9 @@ public:
   bool DisableMulticastLoop(std::string& errmsg);
   bool AddMulticastMembership(std::string& errmsg);
   bool IsReady() const { return is_ready; }
+  bool Poll(std::string& errmsg) const;
+  bool Read(char** msg, size_t& msglen, std::string& errmsg) const;
 };
-#undef MDNS_PORT
 
 } // namespace mnet
 #endif // MNET_H

@@ -21,6 +21,7 @@
 #include <cstring>
 #include <unistd.h>
 #include <cerrno>
+#include <poll.h>
 
 #include "mnet.h"
 
@@ -119,4 +120,63 @@ bool MNet::AddMulticastMembership(std::string& errmsg)
   }
   return true;
 }
+
+bool MNet::Poll(std::string& errmsg) const
+{
+  uint8_t revents;
+  struct pollfd pfd {mFd, POLLIN|POLLOUT, 0};
+  int count = poll(&pfd, 1, 0);
+  if (count == -1) {
+    errmsg = "poll() failed with error: " + std::string(strerror(errno));
+    return false;
+  } else if (count == 0) {
+    errmsg = "poll() says there's nothing new";
+    return false;
+  }
+  return true;
+}
+
+// Returns true on success, false on failure
+// Error message is stored in errmsg
+// On success, *msg contains a buffer with the recevied bytes
+// If *msg contains bytes, then msglen specifies the number of bytes
+bool MNet::Read(char** msg, size_t& msglen, std::string& errmsg) const
+{
+  struct sockaddr src_addr;
+  socklen_t addrlen = sizeof(src_addr);
+  ssize_t count;
+  int flags = MSG_DONTWAIT;
+  // DNS supports up to 512 bytes, MDNS supports whatever is the LAN's MTU
+  // Let's assume 1500
+  char buf[1500];
+
+  count = recvfrom(mFd, buf, sizeof(buf) / sizeof(buf[0]), flags,
+                   &src_addr, &addrlen);
+  if (count == -1 && errno != EAGAIN) {
+    errmsg = std::string("recvfrom() failed with error: ") + strerror(errno);
+    return false;
+  } else if (count == 0) {
+    errmsg = "recvfrom() returned 0 count";
+    return false;
+  } else if (count == -1  && errno == EAGAIN) {
+    errmsg = "recvfrom() returned EAGAIN";
+    return false;
+  }
+  *msg = new char[count];
+  if (*msg == nullptr) {
+    errmsg = std::string("Couldn't allocate a buffer: ") + strerror(errno);
+    return false;
+  }
+  char srcaddr[NI_MAXHOST], srcport[NI_MAXSERV];
+  if (getnameinfo(&src_addr, addrlen, srcaddr, NI_MAXHOST, srcport, NI_MAXSERV,
+                  NI_NUMERICHOST | NI_NUMERICSERV) == 0) {
+    errmsg = std::string("Received message from: ") + srcaddr + ":" + srcport;
+  } else {
+    errmsg = "Received message from unknown peer";
+  }
+  msglen = count;
+  memmove(*msg, buf, msglen);
+  return true;
+}
+
 } // namespace mnet
