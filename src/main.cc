@@ -52,7 +52,7 @@ int main()
   if (msgbuflen == 0) {
     printf("Read() said: %s\n", errmsg.c_str());
   } else {
-    printf("Read %lu bytes: '%s'\n\n", msgbuflen, msgbuf);
+    printf("Read %zd bytes: '%s'\n\n", msgbuflen, msgbuf);
   }
   printf("Everything ran successfully!\n");
   return 0;
