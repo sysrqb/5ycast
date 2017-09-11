@@ -57,10 +57,12 @@ static bool find_usable_socket(const char* node, const char* service,
       continue;
 
     ssize_t r = recvfrom(sfd, &buf, sizeof buf, sock_flags, nullptr, 0);
-    if (r == 0) {
-      break;
-    } else if (r == -1 && errno == EAGAIN) {
-      break;
+    if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0) {
+      if (r == 0) {
+        break;
+      } else if (r == -1 && errno == EAGAIN) {
+        break;
+      }
     }
 
     close(sfd);
