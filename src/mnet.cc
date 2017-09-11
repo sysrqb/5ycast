@@ -78,13 +78,13 @@ bool MNet::CreateSocket(std::string& errmsg)
   std::string errmsg_r;
   struct addrinfo rp;
   int socket;
-  if (!find_usable_socket(mdns_addr, mdns_port_str, errmsg_r, &rp, &socket)) {
-    errmsg = "Failure while searching for usable socket: " + errmsg_r + "\n";
+  if (!find_usable_socket(mdns_addr, mdns_port, errmsg_r, &rp, &socket)) {
+    errmsg = "Failure while searching for usable socket: " + errmsg_r;
     return false;
   }
   std::memmove(&ai, &rp, sizeof(ai));
   mFd = socket;
-  return false;
+  return true;
 }
 
 // Disable message loop

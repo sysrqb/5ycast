@@ -19,12 +19,10 @@
 
 namespace mnet {
 
-#define MDNS_PORT 5353
 class MNet {
   int mFd;
   const char* mdns_addr = "224.0.0.251";
-  const char* mdns_port_str = "MDNS_PORT";
-  const uint16_t mdns_port = MDNS_PORT;
+  const char* mdns_port = "5353";
   struct addrinfo ai;
   bool is_ready;
 
