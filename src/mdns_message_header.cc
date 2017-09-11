@@ -67,7 +67,14 @@ bool DNSHeader::ProcessHeader(const char* const m, const std::size_t mlen)
 
     ad = (*byte_c >> 5) & 0x1;
     cd = (*byte_c >> 4) & 0x1;
+    // The spec says we should ignore these
+    (void)ad;
+    (void)cd;
     rcode = (*byte_c & 0xF);
+    // We should silently ignore messages with non-zero rcode
+    if (rcode != 0) {
+      return false;
+    }
   }
 
   {

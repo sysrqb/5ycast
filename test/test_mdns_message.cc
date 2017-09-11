@@ -222,7 +222,7 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsgAllFFExceptZ) {
   std::unique_ptr<DNSHeader> dnsHeader;
 
   /* If Z is non-zero, we return early */
-  input = (char* )"\xff\xff\xff\x8f\xff\xff\xff\xff\xff\xff\xff\xff";
+  input = (char* )"\xff\xff\xff\x80\xff\xff\xff\xff\xff\xff\xff\xff";
   dnsHeader.reset(new DNSHeader());
   result = dnsHeader->ProcessHeader(input, 12);
   EXPECT_TRUE(result);
@@ -233,7 +233,7 @@ TEST(DNSHeaderTest, ProcessHeaderRawMsgAllFFExceptZ) {
   EXPECT_TRUE(dnsHeader->GetTCField());
   EXPECT_TRUE(dnsHeader->GetRDField());
   EXPECT_TRUE(dnsHeader->GetRAField());
-  EXPECT_EQ((1<<4)-1, dnsHeader->GetRCode());
+  EXPECT_EQ(0u, dnsHeader->GetRCode());
   EXPECT_EQ((1<<16)-1, dnsHeader->GetQDCount());
   EXPECT_EQ((1<<16)-1, dnsHeader->GetANCount());
   EXPECT_EQ((1<<16)-1, dnsHeader->GetNSCount());
