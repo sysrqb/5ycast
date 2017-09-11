@@ -24,8 +24,8 @@ namespace dns_message {
 
 // m: string for parsing
 // mlen: length of m
-DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mRawMsg(m, mlen),
-                                                                      mHeader(new DNSHeader)
+DNSMessage::DNSMessage(const char* const m, const std::size_t mlen) : mHeader(new DNSHeader),
+                                                                      mRawMsg(m, mlen)
 {
 }
 
