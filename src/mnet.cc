@@ -161,6 +161,7 @@ bool MNet::Poll(std::string& errmsg) const
 // Error message is stored in errmsg
 // On success, *msg contains a buffer with the recevied bytes
 // If *msg contains bytes, then msglen specifies the number of bytes
+// On successful return, the caller owns msg.
 bool MNet::Read(char** msg, size_t& msglen, std::string& errmsg) const
 {
   struct sockaddr src_addr;
