@@ -48,7 +48,11 @@ int main()
     printf("Read() failed: %s\n", errmsg.c_str());
     return -1;
   }
-  printf("Read %lu bytes: '%s'\n\n", msgbuflen, msgbuf);
+  if (msgbuflen == 0) {
+    printf("Read() said: %s\n", errmsg.c_str());
+  } else {
+    printf("Read %lu bytes: '%s'\n\n", msgbuflen, msgbuf);
+  }
   printf("Everything ran successfully!\n");
   return 0;
 }

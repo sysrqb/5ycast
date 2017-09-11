@@ -165,10 +165,12 @@ bool MNet::Read(char** msg, size_t& msglen, std::string& errmsg) const
     return false;
   } else if (count == 0) {
     errmsg = "recvfrom() returned 0 count";
-    return false;
+    msglen = 0;
+    return true;
   } else if (count == -1  && errno == EAGAIN) {
     errmsg = "recvfrom() returned EAGAIN";
-    return false;
+    msglen = 0;
+    return true;
   }
   *msg = new char[count];
   if (*msg == nullptr) {
