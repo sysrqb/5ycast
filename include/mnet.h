@@ -28,7 +28,6 @@ class MNet {
   int mFd;
   const char* mdns_addr = "224.0.0.251";
   const char* mdns_port = "5353";
-  struct addrinfo ai;
   bool is_ready;
 
 public:

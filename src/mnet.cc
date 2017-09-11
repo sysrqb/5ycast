@@ -29,7 +29,7 @@ namespace mnet {
 
 // Returns -1 on failure, >= 0 on success
 static bool find_usable_socket(const char* node, const char* service,
-                              std::string& err, struct addrinfo *ai, int *fd)
+                              std::string& err, int *fd)
 {
   struct addrinfo hints;
   struct addrinfo *result, *rp;
@@ -71,7 +71,6 @@ static bool find_usable_socket(const char* node, const char* service,
     err.assign("none found");
     return false;
   }
-  memcpy(ai, rp, sizeof(*ai));
   *fd = sfd;
 
   return true;
@@ -80,13 +79,11 @@ static bool find_usable_socket(const char* node, const char* service,
 bool MNet::CreateSocket(std::string& errmsg)
 {
   std::string errmsg_r;
-  struct addrinfo rp;
   int socket;
-  if (!find_usable_socket(mdns_addr, mdns_port, errmsg_r, &rp, &socket)) {
+  if (!find_usable_socket(mdns_addr, mdns_port, errmsg_r, &socket)) {
     errmsg = "Failure while searching for usable socket: " + errmsg_r;
     return false;
   }
-  std::memmove(&ai, &rp, sizeof(ai));
   mFd = socket;
   return true;
 }
@@ -108,23 +105,32 @@ bool MNet::DisableMulticastLoop(std::string& errmsg)
 bool MNet::AddMulticastMembership(std::string& errmsg)
 {
   const uint8_t loop = 0;
-  struct sockaddr_in* ai_addr_in = reinterpret_cast<struct sockaddr_in*>(ai.ai_addr);
-  if (ai_addr_in == nullptr) {
-    errmsg = "sockaddr is null";
+  struct sockaddr_in sin;
+  socklen_t sin_len = sizeof(sin);
+  if (getsockname(mFd, reinterpret_cast<sockaddr*>(&sin), &sin_len)) {
+    errmsg = std::string("getsockname() failed: ") + strerror(errno);
     return false;
   }
-  const struct ip_mreq mrq{ai_addr_in->sin_addr.s_addr, INADDR_ANY};
+
+  const struct ip_mreqn mrq{sin.sin_addr.s_addr, INADDR_ANY, 0};
   if (setsockopt(mFd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                  &mrq, sizeof(mrq)) != 0) {
     errmsg = "Joining the multicast group failed: ";
     errmsg += std::string(strerror(errno));
     return false;
   }
+
   char srcaddr[NI_MAXHOST], srcport[NI_MAXSERV];
-  if (getnameinfo(ai.ai_addr, sizeof(*ai.ai_addr), srcaddr, NI_MAXHOST, srcport, NI_MAXSERV,
-                  NI_NUMERICHOST | NI_NUMERICSERV) == 0) {
-    errmsg = std::string("Multicast membership added for ");
-    errmsg += std::string(srcaddr) + ":"; + srcport;
+  errmsg = std::string("Multicast membership added for ");
+
+  int res = getnameinfo(reinterpret_cast<sockaddr*>(&sin), sin_len,
+                        srcaddr, NI_MAXHOST,
+                        srcport, NI_MAXSERV,
+                        NI_NUMERICHOST | NI_NUMERICSERV);
+  if (res == 0) {
+    errmsg += std::string(srcaddr) + ":" + srcport;
+  } else {
+    errmsg += std::string("<unknown address>: ") + gai_strerror(res);
   }
   return true;
 }
