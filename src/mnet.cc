@@ -150,6 +150,10 @@ bool MNet::Poll(std::string& errmsg) const
     errmsg = "poll() says there's nothing new";
     return false;
   }
+  errmsg = "Poll() says we should ";
+  errmsg += (pfd.revents&POLLIN)?"read() ":"not read";
+  errmsg += " and should ";
+  errmsg += (pfd.revents&POLLOUT)?"write()":"not write()";
   return true;
 }
 

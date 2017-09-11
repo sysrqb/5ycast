@@ -41,6 +41,7 @@ int main()
     printf("Poll() failed: %s\n", errmsg.c_str());
     return -1;
   }
+  printf("Poll() said: %s\n", errmsg.c_str());
 
   char* msgbuf;
   size_t msgbuflen;
