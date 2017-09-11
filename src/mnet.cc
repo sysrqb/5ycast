@@ -64,12 +64,13 @@ static bool find_usable_socket(const char* node, const char* service,
         break;
       }
     }
+    err.assign(strerror(errno));
 
     close(sfd);
   }
 
   if (rp == nullptr) {
-    err.assign("none found");
+    err += "; none found";
     return false;
   }
   *fd = sfd;
