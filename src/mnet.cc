@@ -46,6 +46,8 @@ static bool find_usable_socket(const char* node, const char* service,
   s = getaddrinfo(node, service, &hints, &result);
   if (s != 0) {
     err.assign(gai_strerror(s));
+    err += std::string("; node: ") + node;
+    err += std::string("; service: ") + service;
     return false;
   }
 
@@ -117,6 +119,12 @@ bool MNet::AddMulticastMembership(std::string& errmsg)
     errmsg = "Joining the multicast group failed: ";
     errmsg += std::string(strerror(errno));
     return false;
+  }
+  char srcaddr[NI_MAXHOST], srcport[NI_MAXSERV];
+  if (getnameinfo(ai.ai_addr, sizeof(*ai.ai_addr), srcaddr, NI_MAXHOST, srcport, NI_MAXSERV,
+                  NI_NUMERICHOST | NI_NUMERICSERV) == 0) {
+    errmsg = std::string("Multicast membership added for ");
+    errmsg += std::string(srcaddr) + ":"; + srcport;
   }
   return true;
 }
