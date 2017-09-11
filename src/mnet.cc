@@ -106,7 +106,11 @@ bool MNet::AddMulticastMembership(std::string& errmsg)
 {
   const uint8_t loop = 0;
   struct sockaddr_in* ai_addr_in = reinterpret_cast<struct sockaddr_in*>(ai.ai_addr);
-  const struct ip_mreq mrq {ai_addr_in->sin_addr.s_addr, INADDR_ANY};
+  if (ai_addr_in == nullptr) {
+    errmsg = "sockaddr is null";
+    return false;
+  }
+  const struct ip_mreq mrq{ai_addr_in->sin_addr.s_addr, INADDR_ANY};
   if (setsockopt(mFd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                  &mrq, sizeof(mrq)) != 0) {
     errmsg = "Joining the multicast group failed: ";
