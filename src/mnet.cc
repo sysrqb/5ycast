@@ -74,6 +74,7 @@ static bool find_usable_socket(const char* node, const char* service,
     return false;
   }
   *fd = sfd;
+  freeaddrinfo(result);
 
   return true;
 }
