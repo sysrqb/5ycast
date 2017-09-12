@@ -52,6 +52,7 @@ int main()
   if (msgbuflen == 0) {
     printf("Read() said: %s\n", errmsg.c_str());
   } else {
+    printf("Read() said: %s\n", errmsg.c_str());
     printf("Read %zd bytes: '%s'\n\n", msgbuflen, msgbuf);
     dns_message::DNSMessage msg{msgbuf, msgbuflen};
     if(!msg.ProcessMessage()) {
