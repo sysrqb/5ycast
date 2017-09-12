@@ -574,14 +574,14 @@ TEST(DNSRRTest, WellformedRData) {
   rr.reset(new DNSRR());
   result = rr->ProcessRR(input, mlen, offset);
   ASSERT_TRUE(result);
-  ASSERT_EQ(rr->GetName().size(), 1);
+  ASSERT_EQ(rr->GetName().size(), 1u);
   EXPECT_EQ(rr->GetName().at(0), std::string("A", 1));
   EXPECT_EQ(rr->GetRRType(), 0x0c);
   EXPECT_EQ(rr->GetRRClass(), 0x01);
   EXPECT_EQ(rr->GetTTL(), 0x04);
   EXPECT_EQ(rr->GetRDLength(), 0x06);
   const DNSPtrRData* ptr = static_cast<const DNSPtrRData*>(rr->GetRData());
-  ASSERT_EQ(ptr->GetDName().size(), 1);
+  ASSERT_EQ(ptr->GetDName().size(), 1u);
   EXPECT_EQ(ptr->GetDName().at(0), std::string("\x01\x02\x03\x04", 4));
 }
 
