@@ -122,4 +122,119 @@ bool DNSHeader::ProcessHeader(const char* const m)
   return ProcessHeader(m, strlen(m));
 }
 
+std::string get_row_sep()
+{
+  return std::string("+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+");
+}
+
+template<typename T>
+std::string get_section_rep(T v, uint8_t len)
+{
+    std::string line;
+    std::string section_str{std::to_string(v)};
+    size_t section_str_len = section_str.size();
+    size_t buffer_len = len - section_str_len;
+    if (buffer_len % 2 == 1) {
+      line.append((buffer_len/2) + 1, ' ');
+    } else {
+      line.append(buffer_len/2, ' ');
+    }
+    line.append(section_str).append(buffer_len/2, ' ');
+    return line;
+}
+
+const std::string DNSHeader::Stringify() const
+{
+  constexpr size_t line_len = 3*16 + 1 - 2;
+  std::vector<std::string> vrep;
+
+  vrep.push_back(
+    std::move(
+      std::string("                                1  1  1  1  1  1")));
+
+  vrep.push_back(
+    std::move(
+      std::string("  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5")));
+
+  vrep.push_back(get_row_sep());
+
+  std::string str_line;
+  {
+    std::string line{"|"};
+    line.append(get_section_rep(mMsgID, line_len)).append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(get_row_sep());
+
+  str_line.erase();
+  {
+    std::string line{"| "};
+    line.append(std::to_string(mBits.mQRField)).append("|");
+    line.append(get_section_rep(mOpCode, 11));
+    line.append("| ").append(std::to_string(mBits.mAAField));
+    line.append("| ").append(std::to_string(mBits.mTCField));
+    line.append("| ").append(std::to_string(mBits.mRDField));
+    line.append("| ").append(std::to_string(mBits.mRAField));
+    line.append("| 0");
+    line.append("| 0");
+    line.append("| 0");
+    line.append("|");
+
+    line.append(get_section_rep(mRcode, 11)).append("|");
+
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(get_row_sep());
+
+  str_line.erase();
+  {
+    std::string line{"|"};
+    line.append(get_section_rep(mQDCount, line_len)).append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(get_row_sep());
+
+  str_line.erase();
+  {
+    std::string line{"|"};
+    line.append(get_section_rep(mANCount, line_len)).append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(get_row_sep());
+
+  str_line.erase();
+  {
+    std::string line{"|"};
+    line.append(get_section_rep(mNSCount, line_len)).append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(get_row_sep());
+
+  str_line.erase();
+  {
+    std::string line{"|"};
+    line.append(get_section_rep(mARCount, line_len)).append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(get_row_sep());
+
+  return [&vrep]() -> std::string {
+    std::string r;
+    for (auto&& e : vrep) { r.append(e); r += "\n"; }
+    return r;
+  }();
+}
+
 } // namespace dns_message

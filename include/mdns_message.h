@@ -267,6 +267,7 @@ public:
   std::uint16_t GetANCount() const { return mANCount; }
   std::uint16_t GetNSCount() const { return mNSCount; }
   std::uint16_t GetARCount() const { return mARCount; }
+  const std::string Stringify() const;
 };
 
 class DNSQuestion {
@@ -382,11 +383,13 @@ public:
   std::vector<std::string> GetQNames() const { return mQNames; }
   std::uint16_t GetQType() const { return mQType; }
   std::uint16_t GetQClass() const { return mQClass; }
+  const std::string Stringify() const;
 };
 
 class DNSRData {
 public:
   DNSRData() = default;
+  const std::string Stringify() const;
 };
 
 class DNSPtrRData final : public DNSRData {
@@ -397,6 +400,7 @@ public:
   explicit DNSPtrRData(std::vector<std::string>&& n) : mPtrDName(n) {}
   void AddPtrNames(const std::vector<std::string>&&);
   const std::vector<std::string>& GetDName() const { return mPtrDName; }
+  const std::string Stringify() const;
 };
 
 class DNSRR {
@@ -530,6 +534,7 @@ public:
   const DNSRData* GetRData() const { return mRData.get(); }
   bool ProcessRR(const char* const m, std::size_t mlen,
                  std::size_t& offset);
+  const std::string Stringify() const;
 };
 
 class DNSMessage {
@@ -554,6 +559,7 @@ public:
   ~DNSMessage() = default;
   const std::string GetRawMessage() const { return mRawMsg; }
   bool ProcessMessage();
+  const std::string Stringify() const;
   static bool ProcessName(const char* const m, std::size_t mlen,
                           std::string& name, std::uint8_t &nlen);
   static bool DecompressName(const char* const m, const std::size_t mlen,

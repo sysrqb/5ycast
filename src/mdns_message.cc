@@ -181,4 +181,9 @@ bool DNSMessage::DecompressName(const char* const m, const std::size_t mlen,
   return true;
 }
 
+const std::string DNSMessage::Stringify() const
+{
+  return mHeader->Stringify();
+}
+
 } // namespace dns_message

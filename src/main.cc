@@ -53,6 +53,9 @@ int main()
     printf("Read() said: %s\n", errmsg.c_str());
   } else {
     printf("Read %zd bytes: '%s'\n\n", msgbuflen, msgbuf);
+    dns_message::DNSMessage msg{msgbuf, msgbuflen};
+    msg.ProcessMessage();
+    printf("%s\n", msg.Stringify().c_str());
   }
   printf("Everything ran successfully!\n");
   return 0;
