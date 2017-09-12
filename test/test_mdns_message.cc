@@ -393,24 +393,56 @@ TEST(DNSQuestionTest, ParseQuestionLength2Label34Length0Null1NullNullLength10) {
   EXPECT_EQ(dnsQuestion->GetQClass(), 0);
 }
 
-TEST(DNSQuestionTest, ParseQuestionLength0x10label2Nulls0xc1Null) {
+TEST(DNSQuestionTest, TwiceIsBetterThanOnce) {
   char* input;
   bool result;
-  std::unique_ptr<DNSQuestion> dnsQuestion;
+  DNSQuestion dnsQuestion;
   std::size_t mlen;
   std::size_t offset;
 
-  input = (char* )"\x10""0123456789abcdef\0\0\xc\1\0";
-  mlen = 1 + 0x10 + 1 + 2 + 2;
+  input = const_cast<char*>(
+    "\x10""0123456789abcdef\xc0\1\0\xc\1\0"
+  );
+  mlen = 1 + 0x10 + 2 + 2 + 2;
   offset = 0;
-  dnsQuestion.reset(new DNSQuestion());
-  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
-  EXPECT_TRUE(result);
-  EXPECT_EQ(dnsQuestion->GetQNames().at(0), std::string("0123456789abcdef"));
-  EXPECT_EQ(dnsQuestion->GetQType(), 0x0c);
-  EXPECT_EQ(dnsQuestion->GetQClass(), 0x01 << 8);
+  result = dnsQuestion.ProcessQuestion(input, mlen, offset);
+  ASSERT_TRUE(result);
+  EXPECT_EQ(dnsQuestion.GetQNames().at(0), std::string("0123456789abcdef"));
+  EXPECT_EQ(dnsQuestion.GetQType(), 0x0c);
+  EXPECT_EQ(dnsQuestion.GetQClass(), 0x01 << 8);
 }
 
+TEST(DNSQuestionTest, TwiceIsBetterThanOnce2) {
+  char* input;
+  bool result;
+  DNSQuestion dnsQuestion;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = const_cast<char*>(
+    "\x10""0123456789abcdef\0\0\xc\0\1\xc0\1\0\xc\0\1"
+  );
+  mlen = 1 + 0x10 + 1 + 2 + 2 + 2 + 2 + 2;
+  offset = 0;
+  result = dnsQuestion.ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+  EXPECT_EQ(dnsQuestion.GetQNames().at(0), std::string("0123456789abcdef"));
+  EXPECT_EQ(dnsQuestion.GetQType(), 0x0c);
+  EXPECT_EQ(dnsQuestion.GetQClass(), 0x01);
+}
+
+TEST(DNSMessageTest, ProcessQuestionsHeaderAnd2QuestionWithPtr) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSMessage> dnsMsg;
+
+  input = const_cast<char*>(
+    "\0\0\0\0\0\2\0\0\0\0\0\0\x10""0123456789abcdef\0\0\xc\0\1\xc0\1\0\xc\0\1"
+  );
+  dnsMsg.reset(new DNSMessage(input, 40));
+  result = dnsMsg->ProcessMessage();
+  EXPECT_TRUE(result);
+}
 TEST(DNSRRTest, MalformedEmpty) {
   char* input;
   bool result;

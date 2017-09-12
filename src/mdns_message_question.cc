@@ -44,9 +44,12 @@ bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
                                  mlen - next_label,
                                  name,
                                  nlen)) {
+    bool is_ptr = (nlen == 1 && ((name[0] & 0xc0) == 0xc0));
     qnames.push_back(std::move(name));
     next_label += nlen + 1;
-    if (nlen == 0) {
+    if (nlen == 0 || is_ptr) {
+      // This was either a nul byte or a pointer. In either case the question
+      // is complete and the remaining bytes are the meta fields
       if (mlen - next_label < 4) {
         return false;
       }
