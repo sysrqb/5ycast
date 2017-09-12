@@ -54,8 +54,11 @@ int main()
   } else {
     printf("Read %zd bytes: '%s'\n\n", msgbuflen, msgbuf);
     dns_message::DNSMessage msg{msgbuf, msgbuflen};
-    msg.ProcessMessage();
-    printf("%s\n", msg.Stringify().c_str());
+    if(!msg.ProcessMessage()) {
+      printf("Parsing incoming message failed\n");
+    } else {
+      printf("%s\n", msg.Stringify().c_str());
+    }
   }
   printf("Everything ran successfully!\n");
   return 0;
