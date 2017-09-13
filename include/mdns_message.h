@@ -568,6 +568,7 @@ public:
 };
 
 struct StringifyDNSMessage {
+  static constexpr size_t line_len = 3*16 + 1 - 2;
   static std::string GetByteLabels()
   {
     return std::string("                                1  1  1  1  1  1\n"

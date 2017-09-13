@@ -124,7 +124,7 @@ bool DNSHeader::ProcessHeader(const char* const m)
 
 const std::string DNSHeader::Stringify() const
 {
-  constexpr size_t line_len = 3*16 + 1 - 2;
+  constexpr size_t line_len = StringifyDNSMessage::line_len;
   std::vector<std::string> vrep;
 
   vrep.push_back(
