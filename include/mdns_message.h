@@ -584,15 +584,15 @@ struct StringifyDNSMessage {
   static std::string GetFieldRep(T v, uint8_t len)
   {
     std::string line;
-    std::string section_str{std::to_string(v)};
-    size_t section_str_len = section_str.size();
-    size_t buffer_len = len - section_str_len;
+    std::string field_str{std::to_string(v)};
+    size_t field_str_len = field_str.size();
+    size_t buffer_len = len - field_str_len;
     if (buffer_len % 2 == 1) {
       line.append((buffer_len/2) + 1, ' ');
     } else {
       line.append(buffer_len/2, ' ');
     }
-    line.append(section_str).append(buffer_len/2, ' ');
+    line.append(field_str).append(buffer_len/2, ' ');
     return line;
   }
 };
