@@ -567,6 +567,35 @@ public:
 
 };
 
+struct StringifyDNSMessage {
+  static std::string GetByteLabels()
+  {
+    return std::string("                                1  1  1  1  1  1\n"
+                       "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5");
+  }
+
+  static std::string GetRowSep()
+  {
+    return std::string("+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+");
+  }
+
+  template<typename T>
+  static std::string GetFieldRep(T v, uint8_t len)
+  {
+    std::string line;
+    std::string section_str{std::to_string(v)};
+    size_t section_str_len = section_str.size();
+    size_t buffer_len = len - section_str_len;
+    if (buffer_len % 2 == 1) {
+      line.append((buffer_len/2) + 1, ' ');
+    } else {
+      line.append(buffer_len/2, ' ');
+    }
+    line.append(section_str).append(buffer_len/2, ' ');
+    return line;
+  }
+};
+
 } // namespace dns_message
 
 #endif // MDNS_MESSAGE_H
