@@ -595,6 +595,47 @@ struct StringifyDNSMessage {
     line.append(field_str).append(buffer_len/2, ' ');
     return line;
   }
+
+  static std::string GetNameRep(std::vector<std::string> names,
+                                size_t max_line_len)
+  {
+    std::vector<std::string> name_rep;
+    std::string line;
+
+    {
+      for (auto& name : names) {
+        if (name.size() == 2) {
+          if ((name[0] & 0xc0) == 0xc0) {
+            line.append("|").append(10, ' ').append(1, name[0]);
+            line.append("|").append(10, ' ').append(1, name[1]);
+            continue;
+          }
+        }
+
+        line.append("|").append(GetFieldRep(name.size(), 8*3-1));
+        for (auto& c : name) {
+          line.append("|").append(11, ' ');
+          line.append(1, c).append(11, ' ');
+          if ((line.size() - 1) == max_line_len) {
+            line.append("|");
+            name_rep.push_back(std::move(line));
+            line.erase();
+          }
+        }
+      }
+      if (line.size() != 0) {
+        line.append("|");
+        name_rep.push_back(std::move(line));
+      }
+    }
+    return [&name_rep]() -> std::string {
+      std::string r;
+      for (auto&& e : name_rep) { r.append(e); r += "\n"; }
+      // Delete the last new line
+      r.pop_back();
+      return r;
+    }();
+  }
 };
 
 } // namespace dns_message

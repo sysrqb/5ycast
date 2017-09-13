@@ -443,6 +443,147 @@ TEST(DNSMessageTest, ProcessQuestionsHeaderAnd2QuestionWithPtr) {
   result = dnsMsg->ProcessMessage();
   EXPECT_TRUE(result);
 }
+
+TEST(DNSQuestionTest, ParseQuestionLength2Label345NullsStringify) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSQuestion> dnsQuestion;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = (char* )"\x02""34\0\0\0\0\0";
+  mlen = 1 + 2 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion.reset(new DNSQuestion());
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+
+  std::string expect{
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           2           |           3           |\n"
+  "|           4           |           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  };
+  EXPECT_EQ(expect, dnsQuestion->Stringify());
+}
+
+TEST(DNSQuestionTest, ParseQuestion16CharsStringify) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSQuestion> dnsQuestion;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = (char* )"\x10""3456345634563456\0\0\0\0\0";
+  mlen = 1 + 16 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion.reset(new DNSQuestion());
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+
+  std::string expect{
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           16          |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  };
+  EXPECT_EQ(expect, dnsQuestion->Stringify());
+
+}
+
+TEST(DNSQuestionTest, ParseQuestion17CharsStringify) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSQuestion> dnsQuestion;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = (char* )"\x11""34563456345634569\0\0\0\0\0";
+  mlen = 1 + 17 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion.reset(new DNSQuestion());
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+
+  std::string expect{
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           17          |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           9           |\n"
+  "|           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  };
+  EXPECT_EQ(expect, dnsQuestion->Stringify());
+}
+
+TEST(DNSQuestionTest, ParseQuestion2NamesStringify) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSQuestion> dnsQuestion;
+  std::size_t mlen;
+  std::size_t offset;
+
+  input = (char* )"\x05""34563""\xc""456345634569\0\0\0\0\0";
+  mlen = 1 + 5 + 1+ 12 + 1 + 2 + 2;
+  offset = 0;
+  dnsQuestion.reset(new DNSQuestion());
+  result = dnsQuestion->ProcessQuestion(input, mlen, offset);
+  EXPECT_TRUE(result);
+
+  std::string expect{
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           5           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           12          |           4           |\n"
+  "|           5           |           6           |\n"
+  "|           3           |           4           |\n"
+  "|           5           |           6           |\n"
+  "|           3           |           4           |\n"
+  "|           5           |           6           |\n"
+  "|           9           |           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  };
+  EXPECT_EQ(expect, dnsQuestion->Stringify());
+}
+
 TEST(DNSRRTest, MalformedEmpty) {
   char* input;
   bool result;
@@ -784,6 +925,130 @@ TEST(HeaderStringifyTest, Format2) {
   };
   EXPECT_EQ(expect, dnsHeader->Stringify());
 }
+
+TEST(DNSMessageStringifyTest, Format1Question) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSMessage> dnsMsg;
+
+  input = const_cast<char*>(
+    "\0\1\1\0\0\1\0\0\0\0\0\0"
+    "\x10""3456345634563456\0\0\xc\0\1"
+  );
+
+  dnsMsg.reset(new DNSMessage(input, 12 + 22));
+  result = dnsMsg->ProcessMessage();
+  ASSERT_TRUE(result);
+  std::string expect{
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "| 0|     0     | 0| 0| 1| 0| 0| 0| 0|     0     |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           16          |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       12                      |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  };
+  EXPECT_EQ(expect, dnsMsg->Stringify());
+}
+
+TEST(DNSMessageStringifyTest, Format3Questions) {
+  char* input;
+  bool result;
+  std::unique_ptr<DNSMessage> dnsMsg;
+
+  input = const_cast<char*>(
+    "\0\1\1\0\0\3\0\0\0\0\0\0"
+    "\x10""3456345634563456\0\0\xc\0\1"
+    "\3""345\0\0\xc\0\1"
+    "\0\0\xc\0\1"
+    //"\xc\xd\0\xc\0\1"
+  );
+
+  dnsMsg.reset(new DNSMessage(input, 12 + 22 + 9 + 5));
+  result = dnsMsg->ProcessMessage();
+  ASSERT_TRUE(result);
+  std::string expect{
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "| 0|     0     | 0| 0| 1| 0| 0| 0| 0|     0     |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       3                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       0                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           16          |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           6           |           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       12                      |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           3           |           3           |\n"
+  "|           4           |           5           |\n"
+  "|           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       12                      |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "                                1  1  1  1  1  1\n"
+  "  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|           0           |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       12                      |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  "|                       1                       |\n"
+  "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+\n"
+  };
+  EXPECT_EQ(expect, dnsMsg->Stringify());
+}
+
 
 } // namespace testing
 } // namespace dns_message

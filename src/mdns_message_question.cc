@@ -70,4 +70,51 @@ bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
   return false;
 }
 
+const std::string DNSQuestion::Stringify() const
+{
+  constexpr size_t line_len = StringifyDNSMessage::line_len;
+  std::vector<std::string> vrep;
+
+  vrep.push_back(std::move(StringifyDNSMessage::GetByteLabels()));
+
+  vrep.push_back(StringifyDNSMessage::GetRowSep());
+
+  std::string str_line;
+  {
+    // GetNameRep() includes '|' when needed
+    str_line.append(StringifyDNSMessage::GetNameRep(mQNames, line_len));
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(StringifyDNSMessage::GetRowSep());
+
+  str_line.erase();
+  {
+    std::string line{"|"};
+    line.append(StringifyDNSMessage::GetFieldRep(mQType, line_len));
+    line.append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(StringifyDNSMessage::GetRowSep());
+
+  str_line.erase();
+  {
+    std::string line{"|"};
+    line.append(StringifyDNSMessage::GetFieldRep(mQClass, line_len));
+    line.append("|");
+    str_line = std::move(line);
+  }
+  vrep.push_back(std::move(str_line));
+
+  vrep.push_back(StringifyDNSMessage::GetRowSep());
+
+  return [&vrep]() -> std::string {
+    std::string r;
+    for (auto&& e : vrep) { r.append(e); r += "\n"; }
+    return r;
+  }();
+}
+
 } // namespace dns_messge

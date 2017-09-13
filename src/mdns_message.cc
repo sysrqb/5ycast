@@ -183,7 +183,11 @@ bool DNSMessage::DecompressName(const char* const m, const std::size_t mlen,
 
 const std::string DNSMessage::Stringify() const
 {
-  return mHeader->Stringify();
+  std::string rep{mHeader->Stringify()};
+  for (const auto& q : mQuestions) {
+    rep += q.Stringify();
+  }
+  return rep;
 }
 
 } // namespace dns_message
