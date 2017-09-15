@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 // Needs C++14 support
 //#include <gsl/gsl>
 
@@ -596,7 +598,7 @@ struct StringifyDNSMessage {
     return line;
   }
 
-  static std::string GetNameRep(std::vector<std::string> names,
+  static std::string GetNameRep(const std::vector<std::string>& names,
                                 size_t max_line_len)
   {
     std::vector<std::string> name_rep;
@@ -604,10 +606,13 @@ struct StringifyDNSMessage {
 
     {
       for (auto& name : names) {
-        if (name.size() == 2) {
+        if (name.length() == 2) {
           if ((name[0] & 0xc0) == 0xc0) {
-            line.append("|").append(10, ' ').append(1, name[0]);
-            line.append("|").append(10, ' ').append(1, name[1]);
+            char buf[5]{0,0,0,0,0};
+            snprintf(buf, 5, "%X", static_cast<uint8_t>(name[0]));
+            line.append("|").append(11, ' ').append(buf).append(10, ' ');
+            line.append("|");
+            line.append(GetFieldRep(static_cast<uint8_t>(name[1]), 8*3-1));
             continue;
           }
         }

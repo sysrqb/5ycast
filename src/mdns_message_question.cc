@@ -46,6 +46,7 @@ bool DNSQuestion::ProcessQuestion(const char* const m, std::size_t mlen,
                                  nlen)) {
     bool is_ptr = (nlen == 1 && ((name[0] & 0xc0) == 0xc0));
     qnames.push_back(std::move(name));
+
     next_label += nlen + 1;
     if (nlen == 0 || is_ptr) {
       // This was either a nul byte or a pointer. In either case the question
@@ -80,10 +81,8 @@ const std::string DNSQuestion::Stringify() const
   vrep.push_back(StringifyDNSMessage::GetRowSep());
 
   std::string str_line;
-  {
-    // GetNameRep() includes '|' when needed
-    str_line.append(StringifyDNSMessage::GetNameRep(mQNames, line_len));
-  }
+  // GetNameRep() includes '|' when needed
+  str_line.append(StringifyDNSMessage::GetNameRep(mQNames, line_len));
   vrep.push_back(std::move(str_line));
 
   vrep.push_back(StringifyDNSMessage::GetRowSep());

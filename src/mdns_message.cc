@@ -140,13 +140,14 @@ bool DNSMessage::ProcessName(const char* const m, std::size_t mlen,
     // it is expected the caller adds 1 so it accounts for the 1 byte
     // length value.
     nlen = 1;
-    name = std::string(m, nlen + 1);
+    name = std::move(std::string(m, 2));
     return true;
   }
   if (nlen > (mlen - 1)) {
     return false;
   }
-  name = std::string((m+1), nlen);
+  const char* const first_byte_of_string = m + 1;
+  name = std::string(first_byte_of_string, nlen);
   return true;
 }
 
