@@ -618,9 +618,15 @@ struct StringifyDNSMessage {
         }
 
         line.append("|").append(GetFieldRep(name.size(), 8*3-1));
+        if ((line.size() - 1) == max_line_len) {
+          line.append("|");
+          name_rep.push_back(std::move(line));
+          line.erase();
+        }
+
         for (auto& c : name) {
-          line.append("|").append(11, ' ');
-          line.append(1, c).append(11, ' ');
+          line.append("|").append(10, ' ').append(1, '\'');
+          line.append(1, c).append(1, '\'').append(10, ' ');
           if ((line.size() - 1) == max_line_len) {
             line.append("|");
             name_rep.push_back(std::move(line));
